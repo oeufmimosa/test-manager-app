@@ -13,6 +13,8 @@ router.get('/', isAdmin, getAllUsersHandler);        // Seul l'admin peut lister
 router.get('/:id', isAdmin, getUserByIdHandler);     // Seul l'admin peut consulter un utilisateur par ID
 router.put('/:id', isAdmin, updateUserHandler);      // Seul l'admin peut modifier un utilisateur
 router.delete('/:id', isAdmin, deleteUserHandler);   // Seul l'admin peut supprimer un utilisateur
+
+// Routes protégées par le middleware superadmin
 router.post('/admin', isSuperAdmin, registerAdmin); // Restreint la création d'admins au superadmin
 
 
