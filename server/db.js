@@ -35,8 +35,14 @@ const getTestSuitesCollection = () => {
   return getDB().collection('testSuites');
 };
 
+// Récupérer la collection des tests
+const getTestsCollection = () => {
+  return getDB().collection('tests');
+};
+
 module.exports = {
   connectDB,
   getUsersCollection,
-  getTestSuitesCollection
+  getTestSuitesCollection,
+  getTestsCollection
 };

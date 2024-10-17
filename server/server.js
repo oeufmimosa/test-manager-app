@@ -2,6 +2,7 @@ const express = require('express');
 require('dotenv').config();
 const userRoutes = require('./routes/userRoutes');
 const testSuitesRoutes = require('./routes/testSuiteRoutes');
+const testRoutes = require('./routes/testRoutes');
 const cors = require('cors'); 
 const app = express();
 const initSuperAdmin = require('./dbInit');
@@ -31,6 +32,7 @@ startServer(); // Appeler la fonction pour démarrer le serveur
 // Utiliser les routes
 app.use('/users', userRoutes);
 app.use('/test-suites', testSuitesRoutes);
+app.use('/tests', testRoutes); 
 
 // Démarrer le serveur
 const PORT = process.env.PORT || 8080;
