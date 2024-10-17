@@ -1,13 +1,13 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 require('dotenv').config();
 const userRoutes = require('./routes/userRoutes');
+const testSuitesRoutes = require('./routes/testSuiteRoutes');
 const cors = require('cors'); 
 const app = express();
 const initSuperAdmin = require('./dbInit');
 const {connectDB} = require('./db');
 
-app.use(bodyParser.json()); // Parse les requêtes en JSON
+app.use(express.json()); // Parse les requêtes en JSON
 
 app.use(cors({
   origin: 'http://localhost:3000', // Autoriser uniquement les requêtes depuis votre frontend
@@ -28,8 +28,9 @@ const startServer = async () => {
 
 startServer(); // Appeler la fonction pour démarrer le serveur
 
-// Utiliser les routes pour les utilisateurs
+// Utiliser les routes
 app.use('/users', userRoutes);
+app.use('/test-suites', testSuitesRoutes);
 
 // Démarrer le serveur
 const PORT = process.env.PORT || 8080;

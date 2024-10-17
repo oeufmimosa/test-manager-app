@@ -11,7 +11,7 @@ const connectDB = async () => {
   try {
     const client = new MongoClient(uri); 
     await client.connect();
-    db = client.db("Cluster0"); 
+    db = client.db("testman"); 
     console.log("Connecté à MongoDB!");
     return db;
   } catch (err) {
@@ -25,11 +25,18 @@ const getDB = () => {
   return db;
 };
 
+// Récupérer la collection des users
 const getUsersCollection = () => {
   return getDB().collection('users');
+};
+
+// Récupérer la collection des suites de tests
+const getTestSuitesCollection = () => {
+  return getDB().collection('testSuites');
 };
 
 module.exports = {
   connectDB,
   getUsersCollection,
+  getTestSuitesCollection
 };

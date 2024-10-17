@@ -19,11 +19,14 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: "Un utilisateur avec cet email existe déjà" });
     }
 
+    const userId = uuidv4(); // Générer un ID unique pour l'utilisateur
+
     // Hacher le mot de passe avant de le stocker
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Créer l'utilisateur avec le rôle 'user'
     const newUser = {
+      user_id: userId,
       name,
       email,
       password: hashedPassword,
@@ -51,12 +54,14 @@ const registerAdmin = async (req, res) => {
     if (existingUser) {
       return res.status(400).json({ message: "Un administrateur avec cet email existe déjà" });
     }
-
+    // Générer un ID unique pour l'administrateur
+    const userId = uuidv4();
     // Hacher le mot de passe avant de le stocker
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Créer l'utilisateur avec le rôle 'admin'
     const newAdmin = {
+      user_id: userId,
       name,
       email,
       password: hashedPassword,
@@ -87,8 +92,6 @@ const getAllUsersHandler = async (req, res) => {
 
   
   // Obtenir un utilisateur par ID
-
-
 const getUserByIdHandler = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -179,7 +182,7 @@ const loginUser = async (req, res) => {
     }
 
     const payload = {
-      id: user._id,
+      user_id: user.user_id,
       email: user.email,
       role: user.role // Ajouter le rôle de l'utilisateur au payload
     };

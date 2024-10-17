@@ -5,7 +5,7 @@ const isAdmin = (req, res, next) => {
     const token = req.headers.authorization.split(" ")[1]; // Récupérer le token JWT depuis le header
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'votre_secret_jwt');
 
-    if (decoded.role !== 'admin') {
+    if (decoded.role !== 'admin' && decoded.role !== 'superadmin') {
       return res.status(403).json({ message: "Accès refusé : vous n'êtes pas administrateur" });
     }
 
