@@ -90,18 +90,20 @@ const getAllUsersHandler = async (req, res) => {
   }
 };
 
-  
-  // Obtenir un utilisateur par ID
+// Handler pour trouver un utilisateur par ID (sans renvoyer le mot de passe)
 const getUserByIdHandler = async (req, res) => {
   try {
     const userId = req.params.id;
     const user = await findUserById(userId);
-    
+
     if (!user) {
       return res.status(404).json({ message: "Utilisateur non trouvé" });
     }
-    
-    res.status(200).json(user);
+
+    // Filtrer les champs sensibles avant d'envoyer la réponse
+    const { password, ...safeUser } = user; // Exclure le mot de passe
+
+    res.status(200).json(safeUser);
   } catch (err) {
     console.error("Erreur lors de la récupération de l'utilisateur:", err);
     res.status(500).json({ message: "Erreur lors de la récupération de l'utilisateur", error: err });
@@ -110,33 +112,66 @@ const getUserByIdHandler = async (req, res) => {
   
   
   // Mettre à jour un utilisateur
-const updateUserHandler = async (req, res) => {
-  try {
-    const userId = req.params.id;
-    const user = await findUserById(userId);
-
-    if (user.role === 'superadmin') {
-      return res.status(403).json({ message: "Le superadmin ne peut pas être modifié" });
+  const updateUserHandler = async (req, res) => {
+    try {
+      const userId = req.params.id;
+      const { name, email,} = req.body;
+  
+      const user = await findUserById(userId);
+  
+      if (!user) {
+        return res.status(404).json({ message: "Utilisateur non trouvé" });
+      }
+  
+      // Mise à jour des informations utilisateur (nom, email)
+      if (name || email) {
+        await updateUserById(userId, { name, email });
+      }
+  
+      res.status(200).json({ message: "Informations mises à jour avec succès" });
+    } catch (err) {
+      console.error("Erreur lors de la mise à jour de l'utilisateur:", err);
+      res.status(500).json({ message: "Erreur lors de la mise à jour de l'utilisateur", error: err });
     }
+  };
 
-    const { name, email, password } = req.body;
-    const updateData = { name, email };
-    if (password) {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      updateData.password = hashedPassword;
+  const changePasswordHandler = async (req, res) => {
+    try {
+      const userId = req.params.id;
+      const { oldPassword, newPassword } = req.body;
+  
+      // Assurez-vous que les champs oldPassword et newPassword sont bien fournis
+      if (!oldPassword || !newPassword) {
+        return res.status(400).json({ message: "Les champs 'oldPassword' et 'newPassword' sont requis" });
+      }
+  
+      const user = await findUserById(userId);
+  
+      if (!user) {
+        return res.status(404).json({ message: "Utilisateur non trouvé" });
+      }
+  
+      console.log("Ancien mot de passe:", oldPassword); // Log pour vérifier
+      console.log("Mot de passe de l'utilisateur dans la base de données:", user.password); // Log pour vérifier
+  
+      // Vérifier si l'ancien mot de passe est correct
+      const isMatch = await bcrypt.compare(oldPassword, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ message: "L'ancien mot de passe est incorrect" });
+      }
+  
+      // Hacher le nouveau mot de passe
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      await updateUserById(userId, { password: hashedPassword });
+  
+      console.log("Mot de passe mis à jour avec succès"); // Log pour confirmer la mise à jour
+  
+      res.status(200).json({ message: "Mot de passe mis à jour avec succès" });
+    } catch (err) {
+      console.error("Erreur lors de la mise à jour du mot de passe:", err);
+      res.status(500).json({ message: "Erreur lors de la mise à jour du mot de passe", error: err });
     }
-
-    const result = await updateUserById(userId, updateData);
-
-    if (result.matchedCount === 0) {
-      return res.status(404).json({ message: "Utilisateur non trouvé" });
-    }
-
-    res.status(200).json({ message: "Utilisateur mis à jour avec succès" });
-  } catch (err) {
-    res.status(500).json({ message: "Erreur lors de la mise à jour de l'utilisateur", error: err });
-  }
-};
+  };
 
 const deleteUserHandler = async (req, res) => {
   try {
@@ -168,9 +203,8 @@ const loginUser = async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({ message: "Email et mot de passe sont requis" });
     }
-
-    const usersCollection = await getUsersCollection();
-    const user = await usersCollection.findOne({ email });
+    
+    const user = await findUserByEmail(email)
 
     if (!user) {
       return res.status(404).json({ message: "Utilisateur non trouvé" });
@@ -206,4 +240,5 @@ module.exports = {
   getUserByIdHandler,
   updateUserHandler,
   deleteUserHandler,
+  changePasswordHandler,
 };

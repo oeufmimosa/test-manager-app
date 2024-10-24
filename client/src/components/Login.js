@@ -9,56 +9,49 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    
-    const loginData = { email, password };
-  
+
     try {
       const response = await fetch('http://localhost:8080/users/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(loginData),
+        body: JSON.stringify({ email, password }),
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
-        // Stocker le jeton JWT dans localStorage (ou ailleurs selon votre stratégie)
+        // Stocker le token JWT dans localStorage
         localStorage.setItem('userToken', data.token);
-  
-        // Rediriger vers la page d'accueil
-        navigate('/home');
+
+        // Rediriger vers la page de synthèse personnelle
+        navigate('/dashboard');
       } else {
         setError(data.message || 'Erreur lors de la connexion');
       }
     } catch (err) {
-      setError('Une erreur s\'est produite');
+      setError("Une erreur s'est produite. Veuillez réessayer.");
     }
   };
-  
 
   return (
-    <div>
+    <div className="login-container">
       <h2>Connexion</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <form onSubmit={handleLogin}>
-        <div>
-          <label>Email :</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Mot de passe :</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Mot de passe"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
         <button type="submit">Se connecter</button>
       </form>
     </div>

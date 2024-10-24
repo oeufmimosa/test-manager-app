@@ -19,7 +19,7 @@ const createTestHandler = async (req, res) => {
       test_id: testId,
       name,
       description,
-      createdBy: req.user.id, // Récupérer l'ID de l'utilisateur connecté
+      createdBy,
       createdAt: new Date(),
       suiteIds: suiteIds || [], // Peut être un tableau vide
     };

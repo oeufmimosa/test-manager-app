@@ -3,13 +3,13 @@ const { getUsersCollection } = require('../db');
 // Trouver un utilisateur par email
 const findUserByEmail = async (email) => {
   const usersCollection = getUsersCollection();
-  return await usersCollection.findOne({ email },{ projection: { password: 0 } });
+  return await usersCollection.findOne({ email });
 };
 
 // Trouver un utilisateur par ID
 const findUserById = async (userId) => {
   const usersCollection = getUsersCollection();
-  return await usersCollection.findOne({ user_id: userId },{ projection: { password: 0 } });
+  return await usersCollection.findOne({ user_id: userId });
 };
 
 // Créer un utilisateur
