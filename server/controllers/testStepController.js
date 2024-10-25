@@ -1,5 +1,8 @@
 const { createTestStep, findTestStepsByTestId, findTestStepById, updateTestStepById, deleteTestStepById } = require('../models/testStepModel');
 const { v4: uuidv4 } = require('uuid');
+const cloudinary = require('../config/cloudinary');
+const upload = require('../config/multer');
+
 
 // Créer un nouveau step de test
 const createTestStepHandler = async (req, res) => {
@@ -11,20 +14,41 @@ const createTestStepHandler = async (req, res) => {
     }
 
     const stepId = uuidv4();
+    let images = [];
+
+    // Upload des images sur Cloudinary
+    if (req.files && req.files.length > 0) {
+      for (let file of req.files) {
+        try {
+          const result = await cloudinary.uploader.upload(file.path);
+          images.push(result.secure_url);
+        } catch (uploadError) {
+          console.error(`Erreur lors du téléchargement de l'image vers Cloudinary: ${uploadError.message}`);
+          return res.status(500).json({ message: "Erreur lors de l'upload de l'image", error: uploadError.message });
+        }
+      }
+    }
 
     const stepData = {
       step_id: stepId,
       test_id,
       description,
-      images: req.files ? req.files.map(file => file.path) : [], // Stocker les chemins des images
+      images,
       createdAt: new Date(),
+      updatedAt: null,
     };
 
+    // Insertion avec gestion des erreurs
     const result = await createTestStep(stepData);
-    
-    res.status(201).json({ message: "Step de test créé avec succès", step: result.ops[0] });
+
+    if (!result || !result.insertedId) {
+      return res.status(500).json({ message: "Erreur inconnue lors de la création du step de test" });
+    }
+
+    res.status(201).json({ message: "Step de test créé avec succès", step: stepData });
   } catch (err) {
-    res.status(500).json({ message: "Erreur lors de la création du step de test", error: err });
+    console.error("Erreur lors de la création du step de test :", err);
+    res.status(500).json({ message: "Erreur lors de la création du step de test", error: err.message });
   }
 };
 
@@ -61,25 +85,74 @@ const getTestStepsByTestIdHandler = async (req, res) => {
 };
 
 // Mettre à jour un step de test par ID
+// Mettre à jour un step de test par ID
 const updateTestStepHandler = async (req, res) => {
   try {
     const stepId = req.params.id;
     const { description } = req.body;
 
+    // Récupérer l'étape de test actuelle pour obtenir ses informations
+    const existingStep = await findTestStepById(stepId);
+    if (!existingStep) {
+      return res.status(404).json({ message: "Step de test non trouvé" });
+    }
+
+    // Initialiser les images avec celles existantes
+    let updatedImages = existingStep.images;
+
+    // Si de nouvelles images sont fournies, remplacer les anciennes
+    if (req.files && req.files.length > 0) {
+      // Supprimer les anciennes images de Cloudinary
+      for (let imagePath of existingStep.images) {
+        const publicId = extractPublicIdFromUrl(imagePath);
+        if (publicId) {
+          await cloudinary.uploader.destroy(publicId);
+        }
+      }
+
+      // Télécharger les nouvelles images sur Cloudinary
+      updatedImages = [];
+      for (let file of req.files) {
+        try {
+          const result = await cloudinary.uploader.upload(file.path);
+          updatedImages.push(result.secure_url);
+        } catch (uploadError) {
+          console.error(`Erreur lors du téléchargement de l'image vers Cloudinary: ${uploadError.message}`);
+          return res.status(500).json({ message: "Erreur lors de l'upload de l'image", error: uploadError.message });
+        }
+      }
+    }
+
+    // Mise à jour des données de l'étape
     const updateData = {
       description,
-      images: req.files ? req.files.map(file => file.path) : [],
+      images: updatedImages,
+      updatedAt: new Date(),
     };
 
+    // Mise à jour dans la base de données
     const result = await updateTestStepById(stepId, updateData);
 
     if (result.matchedCount === 0) {
       return res.status(404).json({ message: "Step de test non trouvé" });
     }
 
-    res.status(200).json({ message: "Step de test mis à jour avec succès" });
+    res.status(200).json({ message: "Step de test mis à jour avec succès", step: updateData });
   } catch (err) {
-    res.status(500).json({ message: "Erreur lors de la mise à jour du step de test", error: err });
+    console.error("Erreur lors de la mise à jour du step de test:", err);
+    res.status(500).json({ message: "Erreur lors de la mise à jour du step de test", error: err.message });
+  }
+};
+
+// Utilitaire pour extraire l'ID public de l'image à partir de l'URL Cloudinary
+const extractPublicIdFromUrl = (url) => {
+  try {
+    const parts = url.split('/');
+    const publicIdWithExtension = parts[parts.length - 1];
+    return publicIdWithExtension.split('.')[0]; // Suppression de l'extension du fichier
+  } catch (err) {
+    console.error("Erreur lors de l'extraction de l'ID public:", err);
+    return null;
   }
 };
 
@@ -87,15 +160,34 @@ const updateTestStepHandler = async (req, res) => {
 const deleteTestStepHandler = async (req, res) => {
   try {
     const stepId = req.params.id;
+
+    // Récupérer l'étape de test actuelle pour obtenir ses informations
+    const existingStep = await findTestStepById(stepId);
+    if (!existingStep) {
+      return res.status(404).json({ message: "Step de test non trouvé" });
+    }
+
+    // Supprimer les images associées du step sur Cloudinary
+    if (existingStep.images && existingStep.images.length > 0) {
+      for (let imagePath of existingStep.images) {
+        const publicId = extractPublicIdFromUrl(imagePath);
+        if (publicId) {
+          await cloudinary.uploader.destroy(publicId);
+        }
+      }
+    }
+
+    // Suppression de l'étape dans la base de données
     const result = await deleteTestStepById(stepId);
 
     if (result.deletedCount === 0) {
       return res.status(404).json({ message: "Step de test non trouvé" });
     }
 
-    res.status(200).json({ message: "Step de test supprimé avec succès" });
+    res.status(200).json({ message: "Step de test et images supprimés avec succès" });
   } catch (err) {
-    res.status(500).json({ message: "Erreur lors de la suppression du step de test", error: err });
+    console.error("Erreur lors de la suppression du step de test:", err);
+    res.status(500).json({ message: "Erreur lors de la suppression du step de test", error: err.message });
   }
 };
 

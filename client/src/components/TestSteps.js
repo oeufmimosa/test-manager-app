@@ -8,7 +8,7 @@ function TestSteps() {
   const [stepDescription, setStepDescription] = useState('');
   const [editStep, setEditStep] = useState(null);
   const [images, setImages] = useState([]);
-  const [newImage, setNewImage] = useState(null);
+  const [newImage, setNewImage] = useState([]);
 
   // Fonction pour récupérer les étapes d'un test spécifique
   const fetchTestSteps = async () => {
@@ -67,14 +67,11 @@ function TestSteps() {
   const updateTestStep = async (step) => {
     const token = localStorage.getItem('userToken');
     const formData = new FormData();
-    formData.append('description', step.description);
+    formData.append('description', editStep.description);
 
-    // Si une nouvelle image est sélectionnée, elle sera utilisée, sinon, conserver l'existante
-    if (newImage) {
-      formData.append('images', newImage); // Ajouter la nouvelle image si elle existe
-    } else {
-      // Ajouter les images existantes pour les conserver
-      step.images.forEach((img) => formData.append('existingImages', img));
+    // Si une nouvelle image est sélectionnée, elle remplace l'ancienne
+    if (newImage.length > 0) {
+      newImage.forEach((image) => formData.append('images', image));
     }
 
     try {
@@ -121,25 +118,29 @@ function TestSteps() {
     }
   };
 
-  // Fonction pour gérer le téléchargement d'images
+  // Fonction pour gérer le téléchargement d'images pour une nouvelle étape
   const handleImageUpload = (e) => {
     setImages(Array.from(e.target.files));
   };
 
+  // Fonction pour gérer le téléchargement de nouvelles images lors de l'édition
   const handleNewImageUpload = (e) => {
-    setNewImage(e.target.files[0]);
+    setNewImage(Array.from(e.target.files));
   };
 
   // Fonction pour initialiser le formulaire de modification
   const startEditingStep = (step) => {
     setEditStep(step);
-    setNewImage(null);
+    setStepDescription(step.description);
+    setImages(step.images); // Remettre les images existantes dans l'état
+    setNewImage([]); // Réinitialiser les nouvelles images
   };
 
   // Fonction pour réinitialiser le formulaire de création
   const resetForm = () => {
     setStepDescription('');
     setImages([]);
+    setNewImage([]);
   };
 
   useEffect(() => {
@@ -174,7 +175,7 @@ function TestSteps() {
               <p>{step.description}</p>
               {step.images && step.images.map((img, index) => (
                 <div key={index}>
-                  <img src={`http://localhost:8080/${img}`} alt="step" width="100" />
+                  <img src={img} alt="step" width="100" />
                 </div>
               ))}
               <button onClick={() => startEditingStep(step)}>Modifier</button>
@@ -190,6 +191,7 @@ function TestSteps() {
                   />
                   <input
                     type="file"
+                    multiple
                     onChange={handleNewImageUpload}
                   />
                   <button onClick={() => updateTestStep(editStep)}>Enregistrer les modifications</button>

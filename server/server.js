@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 require('dotenv').config();
 const userRoutes = require('./routes/userRoutes');
 const testSuitesRoutes = require('./routes/testSuiteRoutes');
@@ -35,6 +36,7 @@ app.use('/users', userRoutes);
 app.use('/test-suites', testSuitesRoutes);
 app.use('/tests', testRoutes); 
 app.use('/test-steps', testStepRoutes); 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Démarrer le serveur
 const PORT = process.env.PORT || 8080;
