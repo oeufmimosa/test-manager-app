@@ -222,7 +222,7 @@ const loginUser = async (req, res) => {
     };
 
     const token = jwt.sign(payload, process.env.JWT_SECRET || '123456', {
-      expiresIn: '1h'
+      expiresIn: '4h'
     });
 
     res.status(200).json({ message: "Connexion réussie", token });

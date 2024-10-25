@@ -21,12 +21,12 @@ const createTestHandler = async (req, res) => {
       description,
       createdBy,
       createdAt: new Date(),
-      suiteIds: suiteIds || [], // Peut être un tableau vide
+      suiteIds: Array.isArray(suiteIds) ? suiteIds : [], // Assurer que c'est un tableau
     };
 
     const result = await createTest(testData);
     
-    res.status(201).json({ message: "Test créé avec succès", test: { name, description, createdBy, suiteIds} });
+    res.status(201).json({ message: "Test créé avec succès", test: { name, description, createdBy, suiteIds } });
   } catch (err) {
     res.status(500).json({ message: "Erreur lors de la création du test", error: err });
   }
@@ -62,16 +62,9 @@ const getTestByIdHandler = async (req, res) => {
 const updateTestHandler = async (req, res) => {
   try {
     const testId = req.params.id;
-    const { name, description, suiteIds } = req.body;
-
-    const updateData = {
-      name,
-      description,
-      suiteIds,
-    };
+    const updateData = req.body; // Contiendra suiteIds et potentiellement d'autres champs
 
     const result = await updateTestById(testId, updateData);
-    
     if (result.matchedCount === 0) {
       return res.status(404).json({ message: "Test non trouvé" });
     }

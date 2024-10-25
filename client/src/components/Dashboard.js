@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import Header from './Header';
 
 function Dashboard() {
   const [userData, setUserData] = useState(null);
@@ -111,18 +112,7 @@ function Dashboard() {
 
   return (
     <div className="dashboard-container">
-      <header>
-        <nav className="navbar">
-          <div className="navbar-logo">
-            <h1>Dashboard</h1>
-          </div>
-          <ul className="navbar-links">
-            <li><Link to="/suites">Suites</Link></li>
-            <li><Link to="/tests">Tests</Link></li>
-            <li><Link to="/execution">Execution</Link></li>
-          </ul>
-        </nav>
-      </header>
+      <Header />
       <main>
         <h2>Votre Synthèse Personnelle</h2>
         {userData ? (

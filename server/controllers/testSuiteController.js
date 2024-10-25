@@ -66,7 +66,7 @@ const updateTestSuiteHandler = async (req, res) => {
 
     const updateData = { name, description, tags };
 
-    const result = await updateTestSuiteById(ObjectId(suiteId), updateData);
+    const result = await updateTestSuiteById(suiteId, updateData);
     if (result.matchedCount === 0) {
       return res.status(404).json({ message: "Suite de test non trouvée" });
     }

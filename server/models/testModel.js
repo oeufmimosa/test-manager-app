@@ -33,7 +33,13 @@ const deleteTestById = async (testId) => {
 // Récupérer tous les tests associés à une suite de test par suite_id
 const findTestsBySuiteId = async (suiteId) => {
     const testsCollection = getTestsCollection();
-    return await testsCollection.find({ suiteIds: suiteId }).toArray();
+    try {
+      const tests = await testsCollection.find({ suiteIds: suiteId }).toArray(); // Recherche où suiteId est présent dans suiteIds
+      return tests;
+    } catch (err) {
+      console.error("Erreur lors de la récupération des tests par suite_id:", err);
+      return [];
+    }
   };
   
   module.exports = {
