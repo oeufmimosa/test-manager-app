@@ -45,10 +45,16 @@ const getTestStepsCollection = () => {
   return getDB().collection('testSteps');
 };
 
+const getExecutionsCollection = () => {
+  return getDB().collection('executions');
+};
+
+
 module.exports = {
   connectDB,
   getUsersCollection,
   getTestSuitesCollection,
   getTestsCollection,
-  getTestStepsCollection
+  getTestStepsCollection,
+  getExecutionsCollection,
 };

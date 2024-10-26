@@ -1,5 +1,5 @@
 const express = require('express');
-const { loginUser, registerUser, getAllUsersHandler, getUserByIdHandler, updateUserHandler, deleteUserHandler, registerAdmin, changePasswordHandler, logoutUser, checkAuth} = require('../controllers/userController');
+const { loginUser, registerUser, getAllUsersHandler, getUserByIdHandler, updateUserHandler, deleteUserHandler, registerAdmin, changePasswordHandler, logoutUser, checkAuth, updateUserRoleHandler} = require('../controllers/userController');
 const isAdmin = require('../middlewares/isAdmin'); // Middleware pour vérifier si l'utilisateur est admin
 const isSuperAdmin = require('../middlewares/isSuperAdmin'); // Middleware pour vérifier si l'utilisateur est superadmin
 const isSelfOrAdmin = require('../middlewares/isSelfOrAdmin'); // Middleware pour vérifier si l'utilisateur est lui-même ou un admin
@@ -39,6 +39,6 @@ router.get('/:id', isSelfOrAdmin, getUserByIdHandler);     // Seul l'admin et l'
 router.put('/:id', isSelfOrAdmin, updateUserHandler);      // Seul l'admin et l'utilisateur lui même peuvent modifier le profil
 router.delete('/:id', isSelfOrAdmin, deleteUserHandler);   // Seul l'admin et l'utilisateur lui même peuvent supprimer le compte
 router.post('/admin', isSuperAdmin, registerAdmin); // Restreint la création d'admins au superadmin
-
+router.put('/:id/role', isSuperAdmin, updateUserRoleHandler); // Restreint la modification du rôle à un superadmin
 
 module.exports = router;

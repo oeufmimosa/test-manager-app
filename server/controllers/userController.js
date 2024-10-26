@@ -133,7 +133,32 @@ const getUserByIdHandler = async (req, res) => {
       console.error("Erreur lors de la mise à jour de l'utilisateur:", err);
       res.status(500).json({ message: "Erreur lors de la mise à jour de l'utilisateur", error: err });
     }
+  }; 
+
+  const updateUserRoleHandler = async (req, res) => {
+    try {
+      const userId = req.params.id;
+      const { role } = req.body;
+  
+      if (!userId || !role) {
+        return res.status(400).json({ message: "L'ID utilisateur et le nouveau rôle sont requis" });
+      }
+  
+  
+      // Utiliser la fonction existante pour mettre à jour le rôle
+      const result = await updateUserById(userId, { role });
+  
+      if (result.modifiedCount === 0) {
+        return res.status(404).json({ message: "Utilisateur non trouvé ou rôle non modifié" });
+      }
+  
+      res.status(200).json({ message: 'Rôle utilisateur mis à jour avec succès' });
+    } catch (err) {
+      console.error("Erreur lors de la mise à jour du rôle de l'utilisateur :", err);
+      res.status(500).json({ message: "Erreur lors de la mise à jour du rôle de l'utilisateur", error: err.message });
+    }
   };
+  
 
   const changePasswordHandler = async (req, res) => {
     try {
@@ -275,4 +300,5 @@ module.exports = {
   changePasswordHandler,
   logoutUser,
   checkAuth,
+  updateUserRoleHandler
 };

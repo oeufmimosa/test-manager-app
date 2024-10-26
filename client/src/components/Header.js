@@ -15,7 +15,7 @@ const Header = () => {
           <li><Link to="/dashboard">Dashboard</Link></li>
           <li><Link to="/suites">Suites</Link></li>
           <li><Link to="/tests">Tests</Link></li>
-          <li><Link to="/execution">Execution</Link></li>
+          <li><Link to="/executions">Execution</Link></li>
 
           {/* Afficher le lien Admin uniquement si l'utilisateur est admin ou superadmin */}
           {isAuthenticated && (role === 'admin' || role === 'superadmin') && (

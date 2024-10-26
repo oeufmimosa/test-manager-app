@@ -10,13 +10,11 @@ function AdminPage() {
   const [editRole, setEditRole] = useState('');
   const navigate = useNavigate();
 
-  // Utilisez useCallback pour mémoriser la fonction fetchAllUsers
   const fetchAllUsers = useCallback(async () => {
     try {
-      const token = localStorage.getItem('userToken');
       const response = await fetch('http://localhost:8080/users', {
         method: 'GET',
-        headers: {'Content-Type': 'application/json',  }, 
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
       });
 
@@ -25,7 +23,6 @@ function AdminPage() {
         setUsers(data);
       } else {
         console.error('Erreur lors de la récupération des utilisateurs');
-        // Rediriger si non autorisé
         if (response.status === 403) {
           navigate('/');
         }
@@ -33,17 +30,20 @@ function AdminPage() {
     } catch (err) {
       console.error('Erreur lors de la récupération des utilisateurs:', err);
     }
-  }, [navigate]); // Inclure `navigate` car elle est utilisée dans la fonction
+  }, [navigate]);
 
-  // Fonction pour initier l'édition d'un utilisateur
   const startEditingUser = (user) => {
+    if (!user.user_id) {
+      console.error('ID utilisateur est manquant lors de l\'édition', user);
+      return;
+    }
+
     setEditUser(user);
     setEditName(user.name);
     setEditEmail(user.email);
     setEditRole(user.role);
   };
 
-  // Fonction pour annuler l'édition
   const cancelEditing = () => {
     setEditUser(null);
     setEditName('');
@@ -51,23 +51,23 @@ function AdminPage() {
     setEditRole('');
   };
 
-  // Fonction pour mettre à jour un utilisateur
-  const updateUser = async (id) => {
-    const token = localStorage.getItem('userToken');
+  const updateUser = async (user_id) => {
+    if (!user_id) {
+      console.error('ID utilisateur est manquant pour la mise à jour');
+      return;
+    }
+
     const updatedData = {
       name: editName,
       email: editEmail,
     };
 
-    // Permettre au super admin de modifier le rôle
-    if (currentUser.role === 'superadmin') {
-      updatedData.role = editRole;
-    }
-
     try {
-      const response = await fetch(`http://localhost:8080/users/${id}`, {
+      const response = await fetch(`http://localhost:8080/users/${user_id}`, {
         method: 'PUT',
-        headers: {'Content-Type': 'application/json',  }, 
+        headers: {
+          'Content-Type': 'application/json',
+        },
         credentials: 'include',
         body: JSON.stringify(updatedData),
       });
@@ -75,7 +75,7 @@ function AdminPage() {
       if (response.ok) {
         alert('Utilisateur mis à jour avec succès');
         setEditUser(null);
-        fetchAllUsers(); // Rafraîchir la liste des utilisateurs
+        fetchAllUsers();
       } else {
         console.error('Erreur lors de la mise à jour de l\'utilisateur');
       }
@@ -84,25 +84,58 @@ function AdminPage() {
     }
   };
 
-  // Fonction pour supprimer un utilisateur (super admin uniquement)
-  const deleteUser = async (id) => {
-    if (currentUser.role !== 'superadmin') {
-      alert('Seul le super admin peut supprimer des utilisateurs');
+  // Fonction pour mettre à jour le rôle d'un utilisateur (superadmin uniquement)
+  const updateUserRole = async (user_id) => {
+    if (!user_id) {
+      console.error('ID utilisateur est manquant pour la mise à jour du rôle');
       return;
     }
 
-    const token = localStorage.getItem('userToken');
+    try {
+      const response = await fetch(`http://localhost:8080/users/${user_id}/role`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ role: editRole }),
+      });
+
+      if (response.ok) {
+        alert('Rôle mis à jour avec succès');
+        setEditUser(null);
+        fetchAllUsers();
+      } else {
+        console.error('Erreur lors de la mise à jour du rôle de l\'utilisateur');
+      }
+    } catch (err) {
+      console.error('Erreur lors de la mise à jour du rôle de l\'utilisateur:', err);
+    }
+  };
+
+  const deleteUser = async (user_id) => {
+    if (!user_id) {
+      console.error('ID utilisateur est manquant pour la suppression');
+      return;
+    }
+
+    if (currentUser.role !== 'superadmin') {
+      alert('Seul le superadmin peut supprimer des utilisateurs');
+      return;
+    }
 
     try {
-      const response = await fetch(`http://localhost:8080/users/${id}`, {
+      const response = await fetch(`http://localhost:8080/users/${user_id}`, {
         method: 'DELETE',
-        headers: {'Content-Type': 'application/json',  }, 
+        headers: {
+          'Content-Type': 'application/json',
+        },
         credentials: 'include',
       });
 
       if (response.ok) {
         alert('Utilisateur supprimé avec succès');
-        fetchAllUsers(); // Rafraîchir la liste des utilisateurs
+        fetchAllUsers();
       } else {
         console.error('Erreur lors de la suppression de l\'utilisateur');
       }
@@ -112,20 +145,19 @@ function AdminPage() {
   };
 
   useEffect(() => {
-    // Simule la récupération des infos de l'utilisateur courant, ex: depuis le token
     setCurrentUser({
-      role: 'superadmin', // ou 'admin', basé sur votre implémentation réelle
+      role: 'superadmin',
     });
 
     fetchAllUsers();
-  }, [fetchAllUsers]); // Inclure fetchAllUsers comme dépendance
+  }, [fetchAllUsers]);
 
   return (
     <div className="admin-page">
       <h1>Admin - Liste des utilisateurs</h1>
       <div className="user-list">
         {users.map((user) => (
-          <div key={user.id} className="user-item">
+          <div key={user.user_id} className="user-item">
             <p><strong>Nom:</strong> {user.name}</p>
             <p><strong>Email:</strong> {user.email}</p>
             <p><strong>Rôle:</strong> {user.role}</p>
@@ -133,9 +165,9 @@ function AdminPage() {
               Modifier
             </button>
             {currentUser.role === 'superadmin' && (
-              <button onClick={() => deleteUser(user.id)}>Supprimer</button>
+              <button onClick={() => deleteUser(user.user_id)}>Supprimer</button>
             )}
-            {editUser && editUser.id === user.id && (
+            {editUser && editUser.user_id === user.user_id && (
               <div className="edit-user-form">
                 <input
                   type="text"
@@ -159,7 +191,10 @@ function AdminPage() {
                     <option value="superadmin">Super Admin</option>
                   </select>
                 )}
-                <button onClick={() => updateUser(user.id)}>Enregistrer</button>
+                <button onClick={() => updateUser(user.user_id)}>Enregistrer</button>
+                {currentUser.role === 'superadmin' && (
+                  <button onClick={() => updateUserRole(user.user_id)}>Mettre à jour le rôle</button>
+                )}
                 <button onClick={cancelEditing}>Annuler</button>
               </div>
             )}

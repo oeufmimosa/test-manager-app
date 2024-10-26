@@ -9,8 +9,10 @@ import SuiteTests from './components/SuiteTests';
 import Tests from './components/Tests';
 import TestSteps from './components/TestSteps';
 import AdminPage from './components/AdminPage';
-// import Execution from './components/Execution';
+import Execution from './components/Execution';
+import ExecutionsPage from './components/ExecutionsPage';
 import ProtectedRoute from './components/ProtectedRoute';
+
 
 function App() {
   return (
@@ -59,14 +61,14 @@ function App() {
             </ProtectedRoute>
           }
         />
-        {/* <Route
-          path="/execution"
+        <Route
+          path="/execution/:executionId"
           element={
             <ProtectedRoute>
               <Execution />
             </ProtectedRoute>
           }
-        />  */}
+        />
         <Route
           path="/admin"
           element={
@@ -75,6 +77,15 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/executions"
+          element={
+            <ProtectedRoute>
+              <ExecutionsPage />
+            </ProtectedRoute>
+          }
+        />
+        
       </Routes>
     </Router>
   );

@@ -5,6 +5,7 @@ const userRoutes = require('./routes/userRoutes');
 const testSuitesRoutes = require('./routes/testSuiteRoutes');
 const testRoutes = require('./routes/testRoutes');
 const testStepRoutes = require('./routes/testStepRoutes');
+const executionRoutes = require('./routes/executionRoutes');
 const cors = require('cors'); 
 const app = express();
 const initSuperAdmin = require('./dbInit');
@@ -39,6 +40,7 @@ app.use('/test-suites', testSuitesRoutes);
 app.use('/tests', testRoutes); 
 app.use('/test-steps', testStepRoutes); 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/executions', executionRoutes);
 
 // Démarrer le serveur
 const PORT = process.env.PORT || 8080;
