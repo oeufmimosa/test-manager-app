@@ -15,16 +15,13 @@ function Login() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
+        credentials: 'include', // Inclure les cookies dans la requête
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        // Stocker le token JWT dans localStorage
-        localStorage.setItem('userToken', data.token);
-
-        // Rediriger vers la page de synthèse personnelle
-        navigate('/dashboard');
+        navigate('/dashboard'); // Rediriger vers la page de synthèse personnelle
       } else {
         setError(data.message || 'Erreur lors de la connexion');
       }

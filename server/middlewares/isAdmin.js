@@ -3,7 +3,7 @@ require('dotenv').config();
 
 const isAdmin = (req, res, next) => {
   try {
-    const token = req.headers.authorization.split(" ")[1]; // Récupérer le token JWT depuis le header
+    const token = req.cookies.authToken;
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     if (decoded.role !== 'admin' && decoded.role !== 'superadmin') {

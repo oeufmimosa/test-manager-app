@@ -1,5 +1,5 @@
 const express = require('express');
-const { loginUser, registerUser, getAllUsersHandler, getUserByIdHandler, updateUserHandler, deleteUserHandler, registerAdmin, changePasswordHandler} = require('../controllers/userController');
+const { loginUser, registerUser, getAllUsersHandler, getUserByIdHandler, updateUserHandler, deleteUserHandler, registerAdmin, changePasswordHandler, logoutUser, checkAuth} = require('../controllers/userController');
 const isAdmin = require('../middlewares/isAdmin'); // Middleware pour vérifier si l'utilisateur est admin
 const isSuperAdmin = require('../middlewares/isSuperAdmin'); // Middleware pour vérifier si l'utilisateur est superadmin
 const isSelfOrAdmin = require('../middlewares/isSelfOrAdmin'); // Middleware pour vérifier si l'utilisateur est lui-même ou un admin
@@ -8,6 +8,8 @@ const router = express.Router();
 
 // Route ouverte à tous (y compris les utilisateurs standards)
 router.post('/login', loginUser);
+router.get('/check-auth', checkAuth);
+router.post('/logout', logoutUser);
 
 // Routes ouverte pour la création d'un compte user
 router.post('/', registerUser);

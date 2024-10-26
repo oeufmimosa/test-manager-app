@@ -1,26 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef,useCallback} from 'react';
 import { useParams } from 'react-router-dom';
 import Header from './Header';
 
 function TestSteps() {
-  const { testId } = useParams(); // Récupère testId depuis les paramètres de l'URL
+  const { testId } = useParams();
   const [testSteps, setTestSteps] = useState([]);
   const [stepDescription, setStepDescription] = useState('');
   const [editStep, setEditStep] = useState(null);
+  const [editDescription, setEditDescription] = useState('');
   const [images, setImages] = useState([]);
   const [newImage, setNewImage] = useState([]);
+  const createImageInputRef = useRef(null);
+  const editImageInputRef = useRef(null);
+  const [testDetails, setTestDetails] = useState(null);
 
-  // Fonction pour récupérer les étapes d'un test spécifique
-  const fetchTestSteps = async () => {
-    const token = localStorage.getItem('userToken');
-
+  const fetchTestSteps = useCallback(async () => {
     try {
       const response = await fetch(`http://localhost:8080/test-steps/test/${testId}`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        credentials: 'include',
       });
 
       if (response.ok) {
@@ -32,29 +30,51 @@ function TestSteps() {
     } catch (err) {
       console.error('Erreur lors de la récupération des étapes du test:', err);
     }
-  };
+  }, [testId]);
 
-  // Fonction pour créer une nouvelle étape
+  // Nouvelle fonction pour récupérer les détails du test par ID
+  const fetchTestDetails = useCallback(async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/tests/${testId}`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setTestDetails(data);
+      } else {
+        console.error('Erreur lors de la récupération des détails du test');
+      }
+    } catch (err) {
+      console.error('Erreur lors de la récupération des détails du test:', err);
+    }
+  }, [testId]);
+
+  useEffect(() => {
+    fetchTestSteps();
+    fetchTestDetails();
+  }, [fetchTestSteps, fetchTestDetails]);
+
+
+
   const createTestStep = async () => {
-    const token = localStorage.getItem('userToken');
     const formData = new FormData();
     formData.append('description', stepDescription);
     images.forEach((image) => formData.append('images', image));
-    formData.append('test_id', testId); // Ajoutez test_id lors de la création
+    formData.append('test_id', testId);
 
     try {
       const response = await fetch('http://localhost:8080/test-steps', {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+        credentials: 'include',
         body: formData,
       });
 
       if (response.ok) {
         alert('Étape créée avec succès');
-        resetForm(); // Réinitialiser le formulaire après la sauvegarde
-        fetchTestSteps(); // Rafraîchir la liste des étapes
+        resetForm();
+        fetchTestSteps();
       } else {
         console.error('Erreur lors de la création de l\'étape');
       }
@@ -63,30 +83,30 @@ function TestSteps() {
     }
   };
 
-  // Fonction pour mettre à jour une étape
   const updateTestStep = async (step) => {
-    const token = localStorage.getItem('userToken');
     const formData = new FormData();
-    formData.append('description', editStep.description);
-
-    // Si une nouvelle image est sélectionnée, elle remplace l'ancienne
+    
+    // Ajouter la description modifiée au FormData
+    formData.append('description', editDescription);
+  
+    // Ajouter les nouvelles images sélectionnées (si présentes)
     if (newImage.length > 0) {
       newImage.forEach((image) => formData.append('images', image));
     }
-
+  
     try {
       const response = await fetch(`http://localhost:8080/test-steps/${step.step_id}`, {
         method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-        body: formData,
+        credentials: 'include',
+        body: formData, // Utilisation de FormData comme corps de la requête
       });
-
+  
       if (response.ok) {
         alert('Étape mise à jour avec succès');
-        setEditStep(null); // Quitter le mode édition après la mise à jour
-        fetchTestSteps(); // Rafraîchir la liste des étapes
+        setEditStep(null);
+        setNewImage([]); // Réinitialiser les nouvelles images
+        setEditDescription(''); // Réinitialiser la description d'édition
+        fetchTestSteps();
       } else {
         console.error('Erreur lors de la mise à jour de l\'étape');
       }
@@ -95,21 +115,16 @@ function TestSteps() {
     }
   };
 
-  // Fonction pour supprimer une étape
   const deleteTestStep = async (id) => {
-    const token = localStorage.getItem('userToken');
-
     try {
       const response = await fetch(`http://localhost:8080/test-steps/${id}`, {
         method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+        credentials: 'include',
       });
 
       if (response.ok) {
         alert('Étape supprimée avec succès');
-        fetchTestSteps(); // Rafraîchir la liste des étapes
+        fetchTestSteps();
       } else {
         console.error('Erreur lors de la suppression de l\'étape');
       }
@@ -118,42 +133,45 @@ function TestSteps() {
     }
   };
 
-  // Fonction pour gérer le téléchargement d'images pour une nouvelle étape
   const handleImageUpload = (e) => {
     setImages(Array.from(e.target.files));
   };
 
-  // Fonction pour gérer le téléchargement de nouvelles images lors de l'édition
   const handleNewImageUpload = (e) => {
     setNewImage(Array.from(e.target.files));
   };
 
-  // Fonction pour initialiser le formulaire de modification
   const startEditingStep = (step) => {
     setEditStep(step);
-    setStepDescription(step.description);
-    setImages(step.images); // Remettre les images existantes dans l'état
-    setNewImage([]); // Réinitialiser les nouvelles images
+    setEditDescription(step.description);
+    setImages(step.images);
+    setNewImage([]);
   };
 
-  // Fonction pour réinitialiser le formulaire de création
   const resetForm = () => {
     setStepDescription('');
     setImages([]);
     setNewImage([]);
+    if (createImageInputRef.current) {
+      createImageInputRef.current.value = '';
+    }
   };
 
-  useEffect(() => {
-    fetchTestSteps();
-  }, [testId]);
-
-  return (
+    return (
     <div>
       <Header />
       <div className="test-steps-container">
+        {/* Afficher les détails du test */}
+        {testDetails && (
+          <div className="test-details">
+            <h2>{testDetails.name}</h2>
+            <p>{testDetails.description}</p>
+            <p><strong>Créé le:</strong> {new Date(testDetails.createdAt).toLocaleDateString()}</p>
+          </div>
+        )}
+
         <h2>Étapes pour le Test</h2>
         
-        {/* Formulaire pour créer une nouvelle étape */}
         <div className="create-step-form">
           <textarea
             placeholder="Description de l'étape"
@@ -164,11 +182,11 @@ function TestSteps() {
             type="file"
             multiple
             onChange={handleImageUpload}
+            ref={createImageInputRef}
           />
           <button onClick={createTestStep}>Créer l'Étape</button>
         </div>
 
-        {/* Liste des étapes */}
         {testSteps.length > 0 ? (
           testSteps.map((step) => (
             <div key={step.step_id} className="step-item">
@@ -181,18 +199,18 @@ function TestSteps() {
               <button onClick={() => startEditingStep(step)}>Modifier</button>
               <button onClick={() => deleteTestStep(step.step_id)}>Supprimer</button>
 
-              {/* Formulaire de modification en dessous de chaque étape si en mode édition */}
               {editStep && editStep.step_id === step.step_id && (
                 <div className="edit-step-form">
                   <textarea
-                    value={editStep.description}
-                    onChange={(e) => setEditStep({ ...editStep, description: e.target.value })}
+                    value={editDescription}
+                    onChange={(e) => setEditDescription(e.target.value)}
                     placeholder="Modifier la description"
                   />
                   <input
                     type="file"
                     multiple
                     onChange={handleNewImageUpload}
+                    ref={editImageInputRef}
                   />
                   <button onClick={() => updateTestStep(editStep)}>Enregistrer les modifications</button>
                   <button onClick={() => setEditStep(null)}>Annuler</button>

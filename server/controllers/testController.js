@@ -108,11 +108,33 @@ const getTestsBySuiteIdHandler = async (req, res) => {
     }
   };
   
+  const removeSuiteIdFromTest = async (req, res) => {
+    try {
+      const { id } = req.params; // ID du test à modifier
+      const { suiteIdToRemove } = req.body; // suite_id à retirer
+  
+      const test = await findTestById(id);
+      if (!test) {
+        return res.status(404).json({ message: "Test non trouvé" });
+      }
+  
+      // Mettre à jour le tableau suiteIds pour enlever suiteIdToRemove
+      const updatedSuiteIds = test.suiteIds.filter(suiteId => suiteId !== suiteIdToRemove);
+  
+      await updateTestById(id, { suiteIds: updatedSuiteIds });
+  
+      res.status(200).json({ message: "Suite ID retiré du test avec succès" });
+    } catch (err) {
+      res.status(500).json({ message: "Erreur lors de la mise à jour du test", error: err });
+    }
+  };
+  
   module.exports = {
     createTestHandler,
     getAllTestsHandler,
     getTestByIdHandler,
     updateTestHandler,
     deleteTestHandler,
-    getTestsBySuiteIdHandler,  
+    getTestsBySuiteIdHandler, 
+    removeSuiteIdFromTest 
   };

@@ -12,15 +12,11 @@ function Tests() {
 
   // Fonction pour récupérer tous les tests disponibles
   const fetchAllTests = async () => {
-    const token = localStorage.getItem('userToken');
-
     try {
       const response = await fetch('http://localhost:8080/tests', {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
       });
 
       if (response.ok) {
@@ -36,18 +32,15 @@ function Tests() {
 
   // Fonction pour créer ou mettre à jour un test
   const saveTest = async () => {
-    const token = localStorage.getItem('userToken');
     const url = editMode ? `http://localhost:8080/tests/${editTestId}` : 'http://localhost:8080/tests';
     const method = editMode ? 'PUT' : 'POST';
 
     try {
       const response = await fetch(url, {
         method: method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        credentials: 'include',
         body: JSON.stringify({ name: testName, description: testDescription }),
+        headers: { 'Content-Type': 'application/json' },
       });
 
       if (response.ok) {
@@ -67,14 +60,11 @@ function Tests() {
 
   // Fonction pour supprimer un test
   const deleteTest = async (id) => {
-    const token = localStorage.getItem('userToken');
-
     try {
       const response = await fetch(`http://localhost:8080/tests/${id}`, {
         method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
       });
 
       if (response.ok) {

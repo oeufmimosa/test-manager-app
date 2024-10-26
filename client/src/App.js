@@ -8,6 +8,7 @@ import Suites from './components/Suites';
 import SuiteTests from './components/SuiteTests';
 import Tests from './components/Tests';
 import TestSteps from './components/TestSteps';
+import AdminPage from './components/AdminPage';
 // import Execution from './components/Execution';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -66,6 +67,14 @@ function App() {
             </ProtectedRoute>
           }
         />  */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
+              <AdminPage />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );

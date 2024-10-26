@@ -9,8 +9,10 @@ const cors = require('cors');
 const app = express();
 const initSuperAdmin = require('./dbInit');
 const {connectDB} = require('./db');
+const cookieParser = require('cookie-parser');
 
 app.use(express.json()); // Parse les requêtes en JSON
+app.use(cookieParser());
 
 app.use(cors({
   origin: 'http://localhost:3000', // Autoriser uniquement les requêtes depuis votre frontend
@@ -44,3 +46,9 @@ app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
 
+app.post('/test-steps', (req, res) => {
+  console.log('Headers:', req.headers);
+  console.log('Body:', req.body);
+  console.log('Files:', req.files);
+  res.send('Vérification des données');
+});

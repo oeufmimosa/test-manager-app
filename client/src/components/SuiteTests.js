@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import Header from './Header';
 
 function SuiteTests() {
   const { suiteId } = useParams();
+  const navigate = useNavigate();
   const [suiteData, setSuiteData] = useState('');
   const [tests, setTests] = useState([]);
   const [allTests, setAllTests] = useState([]);
@@ -11,8 +12,8 @@ function SuiteTests() {
   const [testDescription, setTestDescription] = useState('');
   const [selectedTestId, setSelectedTestId] = useState('');
 
-   // Fonction pour récupérer les informations d'une suite spécifique
-   const fetchTestSuite = async () => {
+  // Fonction pour récupérer les informations d'une suite spécifique
+  const fetchTestSuite = async () => {
     const token = localStorage.getItem('userToken');
 
     try {
@@ -20,8 +21,8 @@ function SuiteTests() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
         },
+        credentials: 'include',
       });
 
       if (response.ok) {
@@ -37,22 +38,18 @@ function SuiteTests() {
 
   // Fonction pour récupérer les tests d'une suite spécifique
   const fetchTestsForSuite = async () => {
-    const token = localStorage.getItem('userToken');
-
     try {
       const response = await fetch(`http://localhost:8080/tests/suite/${suiteId}`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
       });
 
       if (response.ok) {
         const data = await response.json();
         setTests(data);
       } else {
-        console.error('Erreur lors de la récupération des tests de la suite');
+        console.error('Pas de test dans la suite');
       }
     } catch (err) {
       console.error('Erreur lors de la récupération des tests de la suite:', err);
@@ -61,15 +58,11 @@ function SuiteTests() {
 
   // Fonction pour récupérer tous les tests disponibles
   const fetchAllTests = async () => {
-    const token = localStorage.getItem('userToken');
-
     try {
       const response = await fetch('http://localhost:8080/tests', {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
       });
 
       if (response.ok) {
@@ -84,23 +77,19 @@ function SuiteTests() {
   };
 
   // Fonction pour créer un nouveau test et l'ajouter à la suite
- const createAndAddTest = async () => {
-    const token = localStorage.getItem('userToken');
-  
+  const createAndAddTest = async () => {
     try {
       const response = await fetch('http://localhost:8080/tests', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: testName,
           description: testDescription,
           suiteIds: [suiteId], // Ajouter directement le suiteId dans suiteIds
         }),
       });
-  
+
       if (response.ok) {
         alert('Test créé et ajouté à la suite avec succès');
         setTestName('');
@@ -113,44 +102,35 @@ function SuiteTests() {
       console.error('Erreur lors de la création du test:', err);
     }
   };
-  
- // Fonction pour ajouter un test existant à la suite
- const addExistingTestToSuite = async () => {
-    const token = localStorage.getItem('userToken');
-  
+
+  // Fonction pour ajouter un test existant à la suite
+  const addExistingTestToSuite = async () => {
     try {
-      // Récupérer le test existant pour vérifier s'il a déjà `suiteId`
       const testResponse = await fetch(`http://localhost:8080/tests/${selectedTestId}`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
       });
-  
+
       if (testResponse.ok) {
         const test = await testResponse.json();
-  
-        // Vérifier si `suiteId` est déjà dans `suiteIds`
+
         let updatedSuiteIds = test.suiteIds || [];
         if (!updatedSuiteIds.includes(suiteId)) {
-          updatedSuiteIds.push(suiteId); // Ajouter `suiteId` au tableau
+          updatedSuiteIds.push(suiteId);
         }
-  
-        // Mettre à jour uniquement les `suiteIds` sans affecter les autres champs
+
         const updateResponse = await fetch(`http://localhost:8080/tests/${selectedTestId}`, {
           method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
+          credentials: 'include',
           body: JSON.stringify({ suiteIds: updatedSuiteIds, name: test.name, description: test.description }),
+          headers: { 'Content-Type': 'application/json' },
         });
-  
+
         if (updateResponse.ok) {
           alert('Test existant ajouté à la suite avec succès');
           setSelectedTestId('');
-          fetchTestsForSuite(); // Rafraîchir la liste des tests
+          fetchTestsForSuite();
         } else {
           console.error('Erreur lors de la mise à jour du test existant');
         }
@@ -161,9 +141,40 @@ function SuiteTests() {
       console.error('Erreur lors de l\'ajout du test existant à la suite:', err);
     }
   };
-  
-  
-  console.log("suiteId utilisé pour récupérer les tests:", suiteId); // Log pour vérifier
+
+  // Fonction pour naviguer vers TestSteps
+  const navigateToTestSteps = (testId) => {
+    navigate(`/tests/${testId}/steps`);
+  };
+
+ // Fonction pour retirer le suite_id de la suite courante dans un test (plutôt que supprimer le test)
+const removeSuiteFromTest = async (testId) => {
+  try {
+    const response = await fetch(`http://localhost:8080/tests/remove-suite/${testId}`, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ suiteIdToRemove: suiteId }), // Envoyer l'ID de la suite courante à retirer
+    });
+
+    if (response.ok) {
+      alert('Test mis à jour avec succès (suite retirée)');
+      setTests((prevTests) => prevTests.filter(test => test.test_id !== testId));
+      await fetchTestsForSuite(); // Rafraîchir la liste des tests
+    } else {
+      console.error('Erreur lors de la mise à jour du test');
+    }
+  } catch (err) {
+    console.error('Erreur lors de la mise à jour du test:', err);
+  }
+};
+
+
+  // Fonction pour modifier un test (naviguer vers le formulaire de modification)
+  const modifyTest = (testId) => {
+    navigate(`/tests/${testId}/edit`);
+  };
+
   useEffect(() => {
     fetchTestSuite();
     fetchTestsForSuite();
@@ -177,55 +188,55 @@ function SuiteTests() {
         <h2>Tests de la Suite {suiteData.name}</h2>
         <p>{suiteData.description}</p>
         <p>Créé le : {new Date(suiteData.createdAt).toLocaleDateString()}</p>
-        
-        {/* Formulaire pour créer un nouveau test */}
+
         <div className="create-test-form">
-            <input
+          <input
             type="text"
             placeholder="Nom du test"
             value={testName}
             onChange={(e) => setTestName(e.target.value)}
-            />
-            <textarea
+          />
+          <textarea
             placeholder="Description du test"
             value={testDescription}
             onChange={(e) => setTestDescription(e.target.value)}
-            />
-            <button onClick={createAndAddTest}>Créer et Ajouter le Test</button>
+          />
+          <button onClick={createAndAddTest}>Créer et Ajouter le Test</button>
         </div>
 
-        {/* Sélecteur pour ajouter un test existant */}
         <div className="add-existing-test">
-            <select
+          <select
             value={selectedTestId}
             onChange={(e) => setSelectedTestId(e.target.value)}
-            >
+          >
             <option value="">Sélectionner un test existant</option>
             {allTests.map((test) => (
-                <option key={test.test_id} value={test.test_id}>
+              <option key={test.test_id} value={test.test_id}>
                 {test.name}
-                </option>
+              </option>
             ))}
-            </select>
-            <button onClick={addExistingTestToSuite}>Ajouter à la Suite</button>
+          </select>
+          <button onClick={addExistingTestToSuite}>Ajouter à la Suite</button>
         </div>
 
-        {/* Liste des tests de la suite */}
         <div className="test-list">
-            {tests.length > 0 ? (
+          {tests.length > 0 ? (
             tests.map((test) => (
-                <div key={test.test_id} className="test-item">
-                <h3>{test.name}</h3>
+              <div key={test.test_id} className="test-item">
+                <h3 onClick={() => navigateToTestSteps(test.test_id)} style={{ cursor: 'pointer' }}>
+                    {test.name}
+                </h3>
                 <p>{test.description}</p>
-                </div>
+                <button onClick={() => modifyTest(test.test_id)}>Modifier</button>
+                <button onClick={() => removeSuiteFromTest(test.test_id)}>Retirer de la Suite</button>
+              </div>
             ))
-            ) : (
+          ) : (
             <p>Aucun test trouvé pour cette suite.</p>
-            )}
+          )}
         </div>
-        </main>
+      </main>
     </div>
-    
   );
 }
 

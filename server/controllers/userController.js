@@ -1,4 +1,4 @@
-const { getUsersCollection } = require('../db');
+require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
@@ -196,40 +196,72 @@ const deleteUserHandler = async (req, res) => {
 
   
   // Connexion de l'utilisateur
-const loginUser = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({ message: "Email et mot de passe sont requis" });
+  const loginUser = async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      const user = await findUserByEmail(email);
+  
+      if (!user || !(await bcrypt.compare(password, user.password))) {
+        return res.status(401).json({ message: "Email ou mot de passe incorrect" });
+      }
+  
+      const token = jwt.sign({ user_id: user.user_id, role: user.role }, process.env.JWT_SECRET, {
+        expiresIn: '1h',
+      });
+  
+      res.cookie('authToken', token, {
+        httpOnly: true,
+        secure: false, // Assurez-vous que c'est bien réglé pour votre environnement local
+        sameSite: 'Lax',
+        maxAge: 60 * 60 * 1000, // 1 heure
+      });
+  
+      console.log("Cookie défini avec le token:", token); // Ajoutez ce log
+  
+      res.status(200).json({ message: "Connexion réussie" });
+    } catch (err) {
+      res.status(500).json({ message: "Erreur lors de la connexion", error: err });
     }
-    
-    const user = await findUserByEmail(email)
+  };
 
-    if (!user) {
-      return res.status(404).json({ message: "Utilisateur non trouvé" });
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Mot de passe incorrect" });
-    }
-
-    const payload = {
-      user_id: user.user_id,
-      email: user.email,
-      role: user.role // Ajouter le rôle de l'utilisateur au payload
-    };
-
-    const token = jwt.sign(payload, process.env.JWT_SECRET || '123456', {
-      expiresIn: '4h'
+  const logoutUser = (req, res) => {
+    // Effacer le cookie en définissant son expiration à une date passée
+    res.clearCookie('authToken', {
+      httpOnly: true,
+      secure: false // Assurez-vous d'utiliser "https" en production
     });
+    res.status(200).json({ message: "Déconnexion réussie" });
+  };
 
-    res.status(200).json({ message: "Connexion réussie", token });
-  } catch (err) {
-    res.status(500).json({ message: "Erreur lors de la connexion", error: err });
-  }
-};
+  const checkAuth = (req, res) => {
+    const token = req.cookies.authToken;
+    console.log("Token du cookie pour check-auth :", token);
+  
+    if (!token) {
+      return res.status(401).json({ message: 'Non authentifié' });
+    }
+  
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      // Vérifiez que le token contient les informations nécessaires
+      console.log("Données décodées du token :", decoded);
+  
+      // Extraire les informations importantes (id, role, name, etc.)
+      const { id, role, name, email } = decoded;
+  
+      // Envoyer uniquement les informations importantes
+      res.status(200).json({
+        message: 'Authentifié',
+        role: role,
+        name: name,
+        email: email,
+      });
+    } catch (err) {
+      console.log("Erreur dans check-auth :", err);
+      res.status(401).json({ message: 'Token invalide ou expiré' });
+    }
+  };
+  
   
   
 module.exports = {
@@ -241,4 +273,6 @@ module.exports = {
   updateUserHandler,
   deleteUserHandler,
   changePasswordHandler,
+  logoutUser,
+  checkAuth,
 };

@@ -3,19 +3,25 @@ require('dotenv').config();
 
 // Middleware pour vérifier l'authentification
 const verifyToken = (req, res, next) => {
-  const token = req.headers.authorization && req.headers.authorization.split(" ")[1];
+  const token = req.cookies.authToken; // Lire le token depuis le cookie
+
+  console.log("Token reçu pour vérification :", token); // Log du token
 
   if (!token) {
-    return res.status(401).json({ message: 'Token non fourni, accès non autorisé' });
+    console.log("Aucun token trouvé. Accès refusé.");
+    return res.status(401).json({ message: 'Accès refusé, token non fourni' });
   }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // Ajouter les informations de l'utilisateur au req
-    next(); // Continuer à la prochaine étape
+    console.log("Token décodé :", decoded);
+    req.user = decoded;
+    next();
   } catch (err) {
-    res.status(401).json({ message: 'Authentification échouée', error: err });
+    console.log("Erreur lors de la vérification du token :", err);
+    res.status(401).json({ message: 'Token invalide ou expiré', error: err });
   }
 };
+
 
 module.exports = verifyToken;

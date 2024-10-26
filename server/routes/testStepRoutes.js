@@ -1,7 +1,7 @@
 const express = require('express');
 const { createTestStepHandler, getTestStepByIdHandler, getTestStepsByTestIdHandler, updateTestStepHandler, deleteTestStepHandler } = require('../controllers/testStepController');
 const verifyToken = require('../middlewares/authMiddleware');
-const upload = require('../middlewares/docMiddleware'); 
+const upload = require('../config/multer');
 const router = express.Router();
 
 // Routes CRUD pour les steps de test avec gestion des fichiers

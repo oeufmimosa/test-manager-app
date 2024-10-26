@@ -8,19 +8,16 @@ function Suites() {
   const [suiteDescription, setSuiteDescription] = useState('');
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [editSuiteId, setEditSuiteId] = useState(null);
+  const [editSuiteId, setEditSuiteId] = useState('');
   const navigate = useNavigate();
 
   const fetchTestSuites = async () => {
-    const token = localStorage.getItem('userToken');
 
     try {
       const response = await fetch('http://localhost:8080/test-suites', {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
       });
 
       if (response.ok) {
@@ -35,7 +32,6 @@ function Suites() {
   };
 
   const saveTestSuite = async () => {
-    const token = localStorage.getItem('userToken');
     const url = editMode
       ? `http://localhost:8080/test-suites/${editSuiteId}`
       : 'http://localhost:8080/test-suites';
@@ -44,10 +40,8 @@ function Suites() {
     try {
       const response = await fetch(url, {
         method: method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: suiteName, description: suiteDescription }),
       });
 
@@ -68,14 +62,11 @@ function Suites() {
   };
 
   const deleteTestSuite = async (id) => {
-    const token = localStorage.getItem('userToken');
-
     try {
       const response = await fetch(`http://localhost:8080/test-suites/${id}`, {
         method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
       });
 
       if (response.ok) {

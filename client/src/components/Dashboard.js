@@ -15,11 +15,6 @@ function Dashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('userToken');
-    if (!token) {
-      navigate('/login');
-      return;
-    }
 
     const fetchUserData = async () => {
       try {
@@ -27,10 +22,10 @@ function Dashboard() {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
           },
+          credentials: 'include', // Assurez-vous que les cookies sont inclus
         });
-
+    
         if (response.ok) {
           const data = await response.json();
           setUserData(data);
@@ -58,18 +53,16 @@ function Dashboard() {
   };
 
   const handleUpdateUser = async () => {
-    const token = localStorage.getItem('userToken');
-
     try {
       const response = await fetch(`http://localhost:8080/users/me`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
         },
+        credentials: 'include', 
         body: JSON.stringify({ name, email }),
       });
-
+  
       if (response.ok) {
         setUserData({ ...userData, name, email });
         setEditMode(false);
@@ -81,24 +74,24 @@ function Dashboard() {
       console.error("Erreur lors de la mise à jour des informations utilisateur:", err);
     }
   };
+  
 
   const handleChangePassword = async () => {
     if (newPassword !== confirmPassword) {
       alert("Les nouveaux mots de passe ne correspondent pas");
       return;
     }
-
-    const token = localStorage.getItem('userToken');
+  
     try {
       const response = await fetch(`http://localhost:8080/users/me/password`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
         },
+        credentials: 'include', // Assurez-vous que les cookies sont inclus
         body: JSON.stringify({ oldPassword, newPassword }),
       });
-
+  
       if (response.ok) {
         alert("Mot de passe changé avec succès");
         setPasswordMode(false);
@@ -109,7 +102,7 @@ function Dashboard() {
       console.error("Erreur lors de la modification du mot de passe:", err);
     }
   };
-
+  
   return (
     <div className="dashboard-container">
       <Header />

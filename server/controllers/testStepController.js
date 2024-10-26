@@ -88,8 +88,22 @@ const getTestStepsByTestIdHandler = async (req, res) => {
 // Mettre à jour un step de test par ID
 const updateTestStepHandler = async (req, res) => {
   try {
+    console.log("Body:", req.body);
+    console.log("Files:", req.files);
     const stepId = req.params.id;
     const { description } = req.body;
+
+    // Log pour la vérification des données reçues
+    if (!description) {
+      console.error("Aucune description reçue.");
+    }
+
+    // Log des images reçues
+    if (req.files) {
+      console.log("Images reçues:", req.files);
+    } else {
+      console.error("Aucune image reçue.");
+    }
 
     // Récupérer l'étape de test actuelle pour obtenir ses informations
     const existingStep = await findTestStepById(stepId);
@@ -97,10 +111,7 @@ const updateTestStepHandler = async (req, res) => {
       return res.status(404).json({ message: "Step de test non trouvé" });
     }
 
-    // Initialiser les images avec celles existantes
     let updatedImages = existingStep.images;
-
-    // Si de nouvelles images sont fournies, remplacer les anciennes
     if (req.files && req.files.length > 0) {
       // Supprimer les anciennes images de Cloudinary
       for (let imagePath of existingStep.images) {
@@ -109,8 +120,6 @@ const updateTestStepHandler = async (req, res) => {
           await cloudinary.uploader.destroy(publicId);
         }
       }
-
-      // Télécharger les nouvelles images sur Cloudinary
       updatedImages = [];
       for (let file of req.files) {
         try {
@@ -123,14 +132,12 @@ const updateTestStepHandler = async (req, res) => {
       }
     }
 
-    // Mise à jour des données de l'étape
     const updateData = {
       description,
       images: updatedImages,
       updatedAt: new Date(),
     };
 
-    // Mise à jour dans la base de données
     const result = await updateTestStepById(stepId, updateData);
 
     if (result.matchedCount === 0) {
