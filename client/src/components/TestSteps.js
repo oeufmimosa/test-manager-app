@@ -16,7 +16,7 @@ function TestSteps() {
 
   const fetchTestSteps = useCallback(async () => {
     try {
-      const response = await fetch(`http://localhost:8080/test-steps/test/${testId}`, {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/test-steps/test/${testId}`, {
         method: 'GET',
         credentials: 'include',
       });
@@ -35,7 +35,7 @@ function TestSteps() {
   // Nouvelle fonction pour récupérer les détails du test par ID
   const fetchTestDetails = useCallback(async () => {
     try {
-      const response = await fetch(`http://localhost:8080/tests/${testId}`, {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/tests/${testId}`, {
         method: 'GET',
         credentials: 'include',
       });
@@ -65,7 +65,7 @@ function TestSteps() {
     formData.append('test_id', testId);
 
     try {
-      const response = await fetch('http://localhost:8080/test-steps', {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/test-steps`, {
         method: 'POST',
         credentials: 'include',
         body: formData,
@@ -95,7 +95,7 @@ function TestSteps() {
     }
   
     try {
-      const response = await fetch(`http://localhost:8080/test-steps/${step.step_id}`, {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/test-steps/${step.step_id}`, {
         method: 'PUT',
         credentials: 'include',
         body: formData, // Utilisation de FormData comme corps de la requête
@@ -117,7 +117,7 @@ function TestSteps() {
 
   const deleteTestStep = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8080/test-steps/${id}`, {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/test-steps/${id}`, {
         method: 'DELETE',
         credentials: 'include',
       });

@@ -18,7 +18,7 @@ function Dashboard() {
 
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/users/me`, {
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/users/me`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ function Dashboard() {
 
   const handleUpdateUser = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/users/me`, {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/users/me`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ function Dashboard() {
     }
   
     try {
-      const response = await fetch(`http://localhost:8080/users/me/password`, {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/users/me/password`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

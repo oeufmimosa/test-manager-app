@@ -6,7 +6,7 @@ function useAuth() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch('http://localhost:8080/users/check-auth', {
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/users/check-auth`, {
           method: 'GET',
           credentials: 'include', // Assurez-vous d'inclure les cookies dans la requête
         });

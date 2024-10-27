@@ -17,7 +17,7 @@ function SuiteTests() {
     const token = localStorage.getItem('userToken');
 
     try {
-      const response = await fetch(`http://localhost:8080/test-suites/${suiteId}`, { // Correction de l'URL
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/test-suites/${suiteId}`, { // Correction de l'URL
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -39,7 +39,7 @@ function SuiteTests() {
   // Fonction pour récupérer les tests d'une suite spécifique
   const fetchTestsForSuite = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/tests/suite/${suiteId}`, {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/tests/suite/${suiteId}`, {
         method: 'GET',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -59,7 +59,7 @@ function SuiteTests() {
   // Fonction pour récupérer tous les tests disponibles
   const fetchAllTests = async () => {
     try {
-      const response = await fetch('http://localhost:8080/tests', {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/tests`, {
         method: 'GET',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -79,7 +79,7 @@ function SuiteTests() {
   // Fonction pour créer un nouveau test et l'ajouter à la suite
   const createAndAddTest = async () => {
     try {
-      const response = await fetch('http://localhost:8080/tests', {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/tests`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -106,7 +106,7 @@ function SuiteTests() {
   // Fonction pour ajouter un test existant à la suite
   const addExistingTestToSuite = async () => {
     try {
-      const testResponse = await fetch(`http://localhost:8080/tests/${selectedTestId}`, {
+      const testResponse = await fetch(`${process.env.REACT_APP_SERVER_URL}/tests/${selectedTestId}`, {
         method: 'GET',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -120,7 +120,7 @@ function SuiteTests() {
           updatedSuiteIds.push(suiteId);
         }
 
-        const updateResponse = await fetch(`http://localhost:8080/tests/${selectedTestId}`, {
+        const updateResponse = await fetch(`${process.env.REACT_APP_SERVER_URL}/tests/${selectedTestId}`, {
           method: 'PUT',
           credentials: 'include',
           body: JSON.stringify({ suiteIds: updatedSuiteIds, name: test.name, description: test.description }),
@@ -150,7 +150,7 @@ function SuiteTests() {
  // Fonction pour retirer le suite_id de la suite courante dans un test (plutôt que supprimer le test)
 const removeSuiteFromTest = async (testId) => {
   try {
-    const response = await fetch(`http://localhost:8080/tests/remove-suite/${testId}`, {
+    const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/tests/remove-suite/${testId}`, {
       method: 'PUT',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
