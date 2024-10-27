@@ -7,9 +7,9 @@ const findUserByEmail = async (email) => {
 };
 
 // Trouver un utilisateur par ID
-const findUserById = async (id) => {
+const findUserById = async (userId) => {
   const usersCollection = getUsersCollection();
-  return await usersCollection.findOne({ _id: id });
+  return await usersCollection.findOne({ user_id: userId });
 };
 
 // Créer un utilisateur
@@ -19,21 +19,21 @@ const createUser = async (userData) => {
 };
 
 // Mettre à jour un utilisateur par ID
-const updateUserById = async (id, updateData) => {
+const updateUserById = async (userId, updateData) => {
   const usersCollection = getUsersCollection();
-  return await usersCollection.updateOne({ _id: id }, { $set: updateData });
+  return await usersCollection.updateOne({ user_id: userId }, { $set: updateData });
 };
 
 // Supprimer un utilisateur par ID
-const deleteUserById = async (id) => {
+const deleteUserById = async (userId) => {
   const usersCollection = getUsersCollection();
-  return await usersCollection.deleteOne({ _id: id });
+  return await usersCollection.deleteOne({ user_id: userId },);
 };
 
 // Récupérer tous les utilisateurs
 const getAllUsers = async () => {
   const usersCollection = getUsersCollection();
-  return await usersCollection.find().toArray();
+  return await usersCollection.find({}, { projection: { password: 0 } }).toArray();
 };
 
 module.exports = {

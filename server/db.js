@@ -11,7 +11,7 @@ const connectDB = async () => {
   try {
     const client = new MongoClient(uri); 
     await client.connect();
-    db = client.db("Cluster0"); 
+    db = client.db("testman"); 
     console.log("Connecté à MongoDB!");
     return db;
   } catch (err) {
@@ -25,11 +25,36 @@ const getDB = () => {
   return db;
 };
 
+// Récupérer la collection des users
 const getUsersCollection = () => {
   return getDB().collection('users');
 };
 
+// Récupérer la collection des suites de tests
+const getTestSuitesCollection = () => {
+  return getDB().collection('testSuites');
+};
+
+// Récupérer la collection des tests
+const getTestsCollection = () => {
+  return getDB().collection('tests');
+};
+
+// Récupérer la collection des steps de test
+const getTestStepsCollection = () => {
+  return getDB().collection('testSteps');
+};
+
+const getExecutionsCollection = () => {
+  return getDB().collection('executions');
+};
+
+
 module.exports = {
   connectDB,
   getUsersCollection,
+  getTestSuitesCollection,
+  getTestsCollection,
+  getTestStepsCollection,
+  getExecutionsCollection,
 };

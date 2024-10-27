@@ -1,10 +1,11 @@
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 // Middleware pour vérifier si l'utilisateur est superadmin
 const isSuperAdmin = (req, res, next) => {
   try {
-    const token = req.headers.authorization.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || '123456');
+    const token = req.cookies.authToken;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     if (decoded.role !== 'superadmin') {
       return res.status(403).json({ message: "Accès refusé : vous n'êtes pas superadmin" });
