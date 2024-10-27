@@ -11,7 +11,7 @@ function Execution() {
   // Fonction pour récupérer les détails de l'exécution
   const fetchExecution = useCallback(async () => {
     try {
-      const response = await fetch(`http://localhost:8080/executions/${executionId}`, {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/executions/${executionId}`, {
         method: 'GET',
         credentials: 'include',
       });
@@ -27,12 +27,12 @@ function Execution() {
     } catch (err) {
       console.error('Erreur lors de la récupération de l\'exécution :', err);
     }
-  }, [executionId]); // Ajouter `executionId` en tant que dépendance car cette valeur peut changer
+  }, [executionId]);
 
   // Fonction pour récupérer les détails de la suite
   const fetchSuiteDetails = useCallback(async (suiteId) => {
     try {
-      const response = await fetch(`http://localhost:8080/test-suites/${suiteId}`, {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/test-suites/${suiteId}`, {
         method: 'GET',
         credentials: 'include',
       });
@@ -46,12 +46,12 @@ function Execution() {
     } catch (err) {
       console.error('Erreur lors de la récupération des détails de la suite:', err);
     }
-  }, []); // Pas de dépendance car cette fonction est appelée avec un ID spécifique
+  }, []);
 
   // Fonction pour récupérer les détails des tests
   const fetchTestDetails = useCallback(async (testId) => {
     try {
-      const response = await fetch(`http://localhost:8080/tests/${testId}`, {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/tests/${testId}`, {
         method: 'GET',
         credentials: 'include',
       });
@@ -68,12 +68,12 @@ function Execution() {
     } catch (err) {
       console.error('Erreur lors de la récupération des détails du test:', err);
     }
-  }, []); // Pas de dépendance car cette fonction est appelée avec un ID spécifique
+  }, []);
 
   // Fonction pour mettre à jour le statut d'un test
   const updateTestStatus = async (testId, newStatus) => {
     try {
-      const response = await fetch('http://localhost:8080/executions/status', {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/executions/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -99,8 +99,9 @@ function Execution() {
 
   useEffect(() => {
     fetchExecution();
-  }, [fetchExecution]); // Ajouter `fetchExecution` en tant que dépendance
+  }, [fetchExecution]);
 
+  // Ajoutez une vérification conditionnelle pour éviter l'erreur `Cannot read properties of null`
   if (!execution) {
     return <div>Chargement...</div>;
   }

@@ -25,7 +25,7 @@ function Register() {
 
     // Envoyer les données d'inscription au backend
     try {
-      const response = await fetch('http://localhost:8080/users', {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/users`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },

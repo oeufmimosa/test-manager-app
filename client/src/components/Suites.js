@@ -14,7 +14,7 @@ function Suites() {
   const fetchTestSuites = async () => {
 
     try {
-      const response = await fetch('http://localhost:8080/test-suites', {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/test-suites`, {
         method: 'GET',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -33,8 +33,8 @@ function Suites() {
 
   const saveTestSuite = async () => {
     const url = editMode
-      ? `http://localhost:8080/test-suites/${editSuiteId}`
-      : 'http://localhost:8080/test-suites';
+      ? `${process.env.REACT_APP_SERVER_URL}/test-suites/${editSuiteId}`
+      : `${process.env.REACT_APP_SERVER_URL}/test-suites`;
     const method = editMode ? 'PUT' : 'POST';
 
     try {
@@ -63,7 +63,7 @@ function Suites() {
 
   const deleteTestSuite = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8080/test-suites/${id}`, {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/test-suites/${id}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },

@@ -224,28 +224,37 @@ const deleteUserHandler = async (req, res) => {
   const loginUser = async (req, res) => {
     try {
       const { email, password } = req.body;
-      const user = await findUserByEmail(email);
+      console.log("Tentative de connexion pour l'utilisateur :", email); // Log email
   
-      if (!user || !(await bcrypt.compare(password, user.password))) {
+      const user = await findUserByEmail(email);
+    
+      if (!user) {
+        console.log("Utilisateur non trouvé avec cet email :", email);
         return res.status(401).json({ message: "Email ou mot de passe incorrect" });
       }
-  
+    
+      const passwordMatch = await bcrypt.compare(password, user.password);
+      if (!passwordMatch) {
+        console.log("Le mot de passe ne correspond pas pour l'utilisateur :", email);
+        return res.status(401).json({ message: "Email ou mot de passe incorrect" });
+      }
+    
       const token = jwt.sign({ user_id: user.user_id, role: user.role }, process.env.JWT_SECRET, {
         expiresIn: '1h',
       });
-  
+    
       res.cookie('authToken', token, {
         httpOnly: true,
-        secure: false, // Assurez-vous que c'est bien réglé pour votre environnement local
+        secure: process.env.NODE_ENV === 'production', // true uniquement en production avec HTTPS
         sameSite: 'Lax',
         maxAge: 60 * 60 * 1000, // 1 heure
       });
-  
-      console.log("Cookie défini avec le token:", token); // Ajoutez ce log
-  
+    
+      console.log("Connexion réussie pour l'utilisateur :", email);
       res.status(200).json({ message: "Connexion réussie" });
     } catch (err) {
-      res.status(500).json({ message: "Erreur lors de la connexion", error: err });
+      console.log("Erreur lors de la connexion :", err); // Log the error
+      res.status(500).json({ message: "Erreur lors de la connexion", error: err.message });
     }
   };
 
@@ -253,13 +262,14 @@ const deleteUserHandler = async (req, res) => {
     // Effacer le cookie en définissant son expiration à une date passée
     res.clearCookie('authToken', {
       httpOnly: true,
-      secure: false // Assurez-vous d'utiliser "https" en production
+      secure: process.env.NODE_ENV === 'production',// Assurez-vous d'utiliser "https" en production
     });
     res.status(200).json({ message: "Déconnexion réussie" });
   };
+  
 
   const checkAuth = (req, res) => {
-    const token = req.cookies.authToken;
+    const token = req.cookies.authToken; // Assurez-vous que `cookie-parser` est bien configuré
     console.log("Token du cookie pour check-auth :", token);
   
     if (!token) {
@@ -268,24 +278,20 @@ const deleteUserHandler = async (req, res) => {
   
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      // Vérifiez que le token contient les informations nécessaires
       console.log("Données décodées du token :", decoded);
   
-      // Extraire les informations importantes (id, role, name, etc.)
-      const { id, role, name, email } = decoded;
-  
-      // Envoyer uniquement les informations importantes
+      // Assurez-vous que les propriétés retournées correspondent à ce que vous attendez
       res.status(200).json({
         message: 'Authentifié',
-        role: role,
-        name: name,
-        email: email,
+        role: decoded.role,
+        user_id: decoded.user_id, // Inclure l'ID utilisateur
       });
     } catch (err) {
       console.log("Erreur dans check-auth :", err);
       res.status(401).json({ message: 'Token invalide ou expiré' });
     }
   };
+  
   
   
   

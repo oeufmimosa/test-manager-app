@@ -13,7 +13,7 @@ function Tests() {
   // Fonction pour récupérer tous les tests disponibles
   const fetchAllTests = async () => {
     try {
-      const response = await fetch('http://localhost:8080/tests', {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/tests`, {
         method: 'GET',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -32,7 +32,7 @@ function Tests() {
 
   // Fonction pour créer ou mettre à jour un test
   const saveTest = async () => {
-    const url = editMode ? `http://localhost:8080/tests/${editTestId}` : 'http://localhost:8080/tests';
+    const url = editMode ? `${process.env.REACT_APP_SERVER_URL}/tests/${editTestId}` : `${process.env.REACT_APP_SERVER_URL}/tests`;
     const method = editMode ? 'PUT' : 'POST';
 
     try {
@@ -61,7 +61,7 @@ function Tests() {
   // Fonction pour supprimer un test
   const deleteTest = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8080/tests/${id}`, {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/tests/${id}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
