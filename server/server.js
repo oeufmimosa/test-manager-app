@@ -9,14 +9,16 @@ const executionRoutes = require('./routes/executionRoutes');
 const cors = require('cors'); 
 const app = express();
 const initSuperAdmin = require('./dbInit');
-const {connectDB} = require('./db');
+const { connectDB } = require('./db');
 const cookieParser = require('cookie-parser');
 
-app.use(express.json()); // Parse les requêtes en JSON
+// Utiliser le middleware pour le parsing et la gestion des cookies
+app.use(express.json());
 app.use(cookieParser());
 
+// Configuration CORS
 app.use(cors({
-  origin: 'http://localhost:3000', // Autoriser uniquement les requêtes depuis votre frontend
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000', // Autoriser uniquement les requêtes depuis votre frontend
   credentials: true
 }));
 
@@ -48,6 +50,7 @@ app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
 
+// Endpoint de test pour vérifier la réception des données
 app.post('/test-steps', (req, res) => {
   console.log('Headers:', req.headers);
   console.log('Body:', req.body);

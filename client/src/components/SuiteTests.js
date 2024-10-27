@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Header from './Header';
 
 function SuiteTests() {
@@ -14,7 +14,6 @@ function SuiteTests() {
 
   // Fonction pour récupérer les informations d'une suite spécifique
   const fetchTestSuite = async () => {
-    const token = localStorage.getItem('userToken');
 
     try {
       const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/test-suites/${suiteId}`, { // Correction de l'URL
