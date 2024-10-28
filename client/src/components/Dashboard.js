@@ -104,6 +104,31 @@ function Dashboard() {
     }
   };
   
+  // supprimer le compte utilisateur
+  const handleDeleteAccount = async () => {
+    const confirmDeletion = window.confirm("Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.");
+    if (!confirmDeletion) return;
+
+    try {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/users/me`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        alert("Compte supprimé avec succès");
+        navigate('/login'); // Rediriger vers la page de connexion après suppression
+      } else {
+        alert("Erreur lors de la suppression du compte");
+      }
+    } catch (err) {
+      console.error("Erreur lors de la suppression du compte:", err);
+    }
+  };
+
   return (
     <div className="dashboard-container">
       <Header />
@@ -118,7 +143,7 @@ function Dashboard() {
                 <p>Rôle : {userData.role}</p>
                 <button className="dashboard-button" onClick={handleEditToggle}>Modifier les informations</button>
                 <button className="dashboard-button cancel" onClick={handlePasswordToggle}>Modifier le mot de passe</button>
-
+                <button className="dashboard-button delete" onClick={handleDeleteAccount}>Supprimer le compte</button>
               </>
             ) : (
               <>
@@ -168,6 +193,6 @@ function Dashboard() {
       </main>
     </div>
   );
-};
+}
 
 export default Dashboard;
