@@ -1,11 +1,14 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import Header from './Header'
 
 function Execution() {
   const { executionId } = useParams();
   const [execution, setExecution] = useState(null);
   const [suiteDetails, setSuiteDetails] = useState(null);
   const [testDetails, setTestDetails] = useState({});
+  const [testIds, setTestIds] = useState([]);
+  const [suiteId, setSuiteId] = useState('');
   const navigate = useNavigate();
 
   // Fonction pour récupérer les détails de l'exécution
@@ -19,8 +22,8 @@ function Execution() {
       if (response.ok) {
         const data = await response.json();
         setExecution(data);
-        fetchSuiteDetails(data.suite_id); // Récupérer les détails de la suite
-        data.tests.forEach(test => fetchTestDetails(test.test_id));
+        setSuiteId(data.suite_id);
+        setTestIds(data.tests.map(test => test.test_id)); // Récupère les ID des tests pour un appel ultérieur
       } else {
         console.error('Erreur lors de la récupération de l\'exécution');
       }
@@ -30,45 +33,53 @@ function Execution() {
   }, [executionId]);
 
   // Fonction pour récupérer les détails de la suite
-  const fetchSuiteDetails = useCallback(async (suiteId) => {
-    try {
-      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/test-suites/${suiteId}`, {
-        method: 'GET',
-        credentials: 'include',
-      });
+  const fetchSuiteDetails = useCallback(async () => {
+    if (suiteId) {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/test-suites/${suiteId}`, {
+          method: 'GET',
+          credentials: 'include',
+        });
 
-      if (response.ok) {
-        const data = await response.json();
-        setSuiteDetails(data);
-      } else {
-        console.error('Erreur lors de la récupération des détails de la suite');
+        if (response.ok) {
+          const data = await response.json();
+          setSuiteDetails(data);
+        } else {
+          console.error('Erreur lors de la récupération des détails de la suite');
+        }
+      } catch (err) {
+        console.error('Erreur lors de la récupération des détails de la suite:', err);
       }
-    } catch (err) {
-      console.error('Erreur lors de la récupération des détails de la suite:', err);
     }
-  }, []);
+  }, [suiteId]);
 
   // Fonction pour récupérer les détails des tests
-  const fetchTestDetails = useCallback(async (testId) => {
-    try {
-      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/tests/${testId}`, {
-        method: 'GET',
-        credentials: 'include',
-      });
+  const fetchTestDetails = useCallback(async () => {
+    const idsToFetch = testIds.filter(testId => !testDetails[testId]); // Ne récupère que les tests non déjà chargés
 
-      if (response.ok) {
-        const data = await response.json();
-        setTestDetails(prevDetails => ({
-          ...prevDetails,
-          [testId]: data,
-        }));
-      } else {
-        console.error('Erreur lors de la récupération des détails du test');
+    const fetchPromises = idsToFetch.map(async (testId) => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/tests/${testId}`, {
+          method: 'GET',
+          credentials: 'include',
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setTestDetails(prevDetails => ({
+            ...prevDetails,
+            [testId]: data,
+          }));
+        } else {
+          console.error('Erreur lors de la récupération des détails du test');
+        }
+      } catch (err) {
+        console.error('Erreur lors de la récupération des détails du test:', err);
       }
-    } catch (err) {
-      console.error('Erreur lors de la récupération des détails du test:', err);
-    }
-  }, []);
+    });
+
+    await Promise.all(fetchPromises);
+  }, [testIds, testDetails]);
 
   // Fonction pour mettre à jour le statut d'un test
   const updateTestStatus = async (testId, newStatus) => {
@@ -88,7 +99,7 @@ function Execution() {
 
       if (response.ok) {
         alert('Statut du test mis à jour avec succès');
-        fetchExecution(); // Rafraîchir les détails de l'exécution après la mise à jour
+        await fetchExecution(); // Rafraîchir les détails de l'exécution après la mise à jour
       } else {
         console.error('Erreur lors de la mise à jour du statut du test');
       }
@@ -97,9 +108,20 @@ function Execution() {
     }
   };
 
+  // UseEffect pour initialiser les données d'exécution
   useEffect(() => {
     fetchExecution();
   }, [fetchExecution]);
+
+  // UseEffect pour récupérer les détails de la suite lorsque suiteId change
+  useEffect(() => {
+    fetchSuiteDetails();
+  }, [fetchSuiteDetails]);
+
+  // UseEffect pour récupérer les détails des tests lorsque testIds change
+  useEffect(() => {
+    fetchTestDetails();
+  }, [fetchTestDetails]);
 
   // Ajoutez une vérification conditionnelle pour éviter l'erreur `Cannot read properties of null`
   if (!execution) {
@@ -108,6 +130,8 @@ function Execution() {
 
   return (
     <div className="execution-page">
+      <Header />
+      <main>
       <h2>Exécution : {execution.execution_name}</h2>
       {suiteDetails && <p>Suite : {suiteDetails.name}</p>}
       <p>Date de création : {new Date(execution.createdAt).toLocaleString()}</p>
@@ -123,6 +147,7 @@ function Execution() {
           </div>
         ))}
       </div>
+      </main>
     </div>
   );
 }

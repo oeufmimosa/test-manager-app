@@ -96,9 +96,9 @@ function Tests() {
   }, []);
 
   return (
-    <div>
+    <div className="container">
       <Header />
-      <div className="tests-container">
+      <main>
         <h2>Gestion des Tests</h2>
         <button onClick={() => {
           setEditMode(false);
@@ -108,7 +108,7 @@ function Tests() {
           {editMode ? 'Annuler' : 'Créer Test'}
         </button>
 
-        <div className="test-form">
+        <div className="block-item">
           <input
             type="text"
             placeholder="Nom du test"
@@ -125,7 +125,7 @@ function Tests() {
           </button>
         </div>
 
-        <div className="test-list">
+        <div className="block-list">
           {tests.length > 0 ? (
             tests.map((test) => (
               <div key={test.test_id} className="test-item">
@@ -133,17 +133,19 @@ function Tests() {
                   {test.name}
                 </h3>
                 <p>{test.description}</p>
-                <button onClick={() => startEditingTest(test)}>Modifier</button>
-                <button onClick={() => deleteTest(test.test_id)}>Supprimer</button>
+                <div className="block-buttons">
+                  <button onClick={() => startEditingTest(test)}>Modifier</button>
+                  <button onClick={() => deleteTest(test.test_id)}>Supprimer</button>
+                </div>
               </div>
             ))
           ) : (
             <p>Aucun test trouvé.</p>
           )}
         </div>
-      </div>
+      </main>
     </div>
   );
-}
+};
 
 export default Tests;
