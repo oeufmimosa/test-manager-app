@@ -10,12 +10,24 @@ function Register() {
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
 
+  // Fonction de validation du mot de passe
+  const validatePassword = (password) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$/;
+    return regex.test(password);
+  };
+
+
   const handleRegister = async (e) => {
     e.preventDefault();
 
     // Vérifier si les mots de passe correspondent
     if (password !== confirmPassword) {
       setError("Les mots de passe ne correspondent pas.");
+      return;
+    }
+
+    if (!validatePassword(password)) {
+      setError("Le mot de passe doit contenir au moins 12 caractères, incluant une majuscule, une minuscule, un chiffre et un caractère spécial.");
       return;
     }
 
@@ -71,7 +83,7 @@ function Register() {
         />
         <input
           type="password"
-          placeholder="Mot de passe"
+          placeholder="Mot de passe: minimum 12 caractères, incluant une majuscule, une minuscule, un chiffre et un caractère spécial"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
