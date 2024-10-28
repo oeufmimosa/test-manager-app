@@ -1,0 +1,117 @@
+@import './_variables.scss';
+// Fontes et arrières plans
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: $secondary-color;
+  color: #333;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+// Titres
+h1, h2, h3 {
+  color: $primary-color;
+  font-weight: bold;
+}
+
+// Liens
+a {
+  text-decoration: none;
+  color: inherit;
+
+  &:hover {
+    color: $button-hover-color;
+  }
+}
+
+// Espacement des conteneurs pour éviter que les champs sortent
+.container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+button {
+  background-color: $button-color;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: $button-hover-color;
+  }
+
+  &.cancel {
+    background-color: $logout-color;
+
+    &:hover {
+      background-color: $logout-hover-color;
+    }
+  }
+}
+
+// Champs de formulaire
+input, textarea {
+  padding: 10px;
+  margin-bottom: 15px;
+  width: 100%;
+  max-width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+// Styles pour les blocs
+.block-item {
+    background-color: #3b4a59;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    color: #ffffff;
+    word-wrap: break-word; // Pour s'assurer que les mots longs se cassent
+  
+    h3 {
+      font-size: 1.5em;
+      cursor: pointer;
+      color: #ffffff;
+    }
+  
+    p {
+      background-color: #53667a;
+      padding: 10px;
+      border-radius: 5px;
+      margin: 10px 0;
+      color: #ffffff;
+      word-wrap: break-word; // Pour s'assurer que les mots longs se cassent
+      white-space: pre-wrap; // Pour gérer les retours à la ligne
+      overflow-wrap: break-word; // Pour couper les longs mots
+      font-size: 1.1em; 
+    }
+  
+    .block-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap; // Pour que les boutons passent à la ligne si nécessaire
+    }
+}
+// Mobile Adaptation
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+
+  button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  input, textarea {
+    width: 100%;
+  }
+}

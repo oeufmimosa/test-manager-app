@@ -1,0 +1,16 @@
+runtime: nodejs18
+service: server
+instance_class: F2
+env_variables:
+  MONGODB_URI: "mongodb+srv://elieiniesta:RB.4jE2mYdzP8SQ@cluster0.ygf4s.mongodb.net/?retryWrites=true&w=majority&appName=testman"
+  JWT_SECRET: "123456"
+  CLOUDINARY_CLOUD_NAME: "dru25366h"
+  CLOUDINARY_API_KEY: "118937554824628"
+  CLOUDINARY_API_SECRET: "NsGZNy3635__UYMFdt4Ow0DWkNo"
+  PORT: "8080"
+  NODE_ENV: "production"
+  FRONTEND_URL: "https://test-manager-server.ew.r.appspot.com"
+automatic_scaling:
+  target_cpu_utilization: 0.65
+  min_instances: 1
+  max_instances: 3
