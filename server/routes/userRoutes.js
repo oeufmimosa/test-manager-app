@@ -27,6 +27,11 @@ router.put('/me', verifyToken, async (req, res) => {
     updateUserHandler(req, res);
 });
 
+router.delete('/me', verifyToken, (req, res) => {
+  req.params.id = req.user.user_id; 
+  deleteUserHandler(req, res);
+});
+
 // Route spécifique pour changer le mot de passe de l'utilisateur connecté
 router.put('/me/password', verifyToken, async (req, res) => {
     req.params.id = req.user.user_id;
