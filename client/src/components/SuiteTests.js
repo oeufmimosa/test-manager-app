@@ -10,6 +10,8 @@ function SuiteTests() {
   const [allTests, setAllTests] = useState([]);
   const [testName, setTestName] = useState('');
   const [testDescription, setTestDescription] = useState('');
+  const [editMode, setEditMode] = useState(false);
+  const [editTestId, setEditTestId] = useState(null);
   const [selectedTestId, setSelectedTestId] = useState('');
 
   // Fonction pour récupérer les informations d'une suite spécifique
@@ -32,6 +34,34 @@ function SuiteTests() {
       }
     } catch (err) {
       console.error('Erreur lors de la récupération des suites de tests:', err);
+    }
+  };
+
+  const saveTest = async () => {
+    const url = editMode ? `${process.env.REACT_APP_SERVER_URL}/tests/${editTestId}` : `${process.env.REACT_APP_SERVER_URL}/tests`;
+    const method = editMode ? 'PUT' : 'POST';
+
+    try {
+      const response = await fetch(url, {
+        method: method,
+        credentials: 'include',
+        body: JSON.stringify({ name: testName, description: testDescription, suiteIds: [suiteId],}),
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (response.ok) {
+        alert(editMode ? 'Test mis à jour avec succès' : 'Test créé avec succès');
+        setTestName('');
+        setTestDescription('');
+        setEditMode(false);
+        setEditTestId(null);
+        await fetchTestsForSuite();
+        fetchAllTests(); // Rafraîchir la liste des tests
+      } else {
+        console.error('Erreur lors de la sauvegarde du test');
+      }
+    } catch (err) {
+      console.error('Erreur lors de la sauvegarde du test:', err);
     }
   };
 
@@ -76,31 +106,31 @@ function SuiteTests() {
   };
 
   // Fonction pour créer un nouveau test et l'ajouter à la suite
-  const createAndAddTest = async () => {
-    try {
-      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/tests`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: testName,
-          description: testDescription,
-          suiteIds: [suiteId], // Ajouter directement le suiteId dans suiteIds
-        }),
-      });
+  // const createAndAddTest = async () => {
+  //   try {
+  //     const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/tests`, {
+  //       method: 'POST',
+  //       credentials: 'include',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify({
+  //         name: testName,
+  //         description: testDescription,
+  //         suiteIds: [suiteId], // Ajouter directement le suiteId dans suiteIds
+  //       }),
+  //     });
 
-      if (response.ok) {
-        alert('Test créé et ajouté à la suite avec succès');
-        setTestName('');
-        setTestDescription('');
-        fetchTestsForSuite(); // Rafraîchir la liste des tests
-      } else {
-        console.error('Erreur lors de la création du test');
-      }
-    } catch (err) {
-      console.error('Erreur lors de la création du test:', err);
-    }
-  };
+  //     if (response.ok) {
+  //       alert('Test créé et ajouté à la suite avec succès');
+  //       setTestName('');
+  //       setTestDescription('');
+  //       fetchTestsForSuite(); // Rafraîchir la liste des tests
+  //     } else {
+  //       console.error('Erreur lors de la création du test');
+  //     }
+  //   } catch (err) {
+  //     console.error('Erreur lors de la création du test:', err);
+  //   }
+  // };
 
   // Fonction pour ajouter un test existant à la suite
   const addExistingTestToSuite = async () => {
@@ -170,8 +200,11 @@ const removeSuiteFromTest = async (testId) => {
 
 
   // Fonction pour modifier un test (naviguer vers le formulaire de modification)
-  const modifyTest = (testId) => {
-    navigate(`/tests/${testId}/edit`);
+  const startEditingTest = (test) => {
+    setTestName(test.name);
+    setTestDescription(test.description);
+    setEditMode(true);
+    setEditTestId(test.test_id);
   };
 
   useEffect(() => {
@@ -181,14 +214,14 @@ const removeSuiteFromTest = async (testId) => {
   }, [suiteId]);
 
   return (
-    <div className="suite-tests-container">
+    <div className="container">
       <Header />
       <main>
         <h2>Tests de la Suite {suiteData.name}</h2>
         <p>{suiteData.description}</p>
         <p>Créé le : {new Date(suiteData.createdAt).toLocaleDateString()}</p>
 
-        <div className="create-test-form">
+        <div className="block-item">
           <input
             type="text"
             placeholder="Nom du test"
@@ -200,10 +233,12 @@ const removeSuiteFromTest = async (testId) => {
             value={testDescription}
             onChange={(e) => setTestDescription(e.target.value)}
           />
-          <button onClick={createAndAddTest}>Créer et Ajouter le Test</button>
+          <button onClick={saveTest}>
+            {editMode ? 'Mettre à jour le Test' : 'Créer le Test'}
+          </button>
         </div>
 
-        <div className="add-existing-test">
+        <div className="block-list">
           <select
             value={selectedTestId}
             onChange={(e) => setSelectedTestId(e.target.value)}
@@ -221,13 +256,16 @@ const removeSuiteFromTest = async (testId) => {
         <div className="test-list">
           {tests.length > 0 ? (
             tests.map((test) => (
-              <div key={test.test_id} className="test-item">
+              <div key={test.test_id} className="block-item">
                 <h3 onClick={() => navigateToTestSteps(test.test_id)} style={{ cursor: 'pointer' }}>
                     {test.name}
                 </h3>
                 <p>{test.description}</p>
-                <button onClick={() => modifyTest(test.test_id)}>Modifier</button>
-                <button onClick={() => removeSuiteFromTest(test.test_id)}>Retirer de la Suite</button>
+                <div className="block-buttons">
+                  <button onClick={() => startEditingTest(test)}>Modifier</button>
+                  <button onClick={() => removeSuiteFromTest(test.test_id)}>Retirer de la Suite</button>
+
+                </div>
               </div>
             ))
           ) : (
@@ -237,6 +275,7 @@ const removeSuiteFromTest = async (testId) => {
       </main>
     </div>
   );
-}
+};
+
 
 export default SuiteTests;

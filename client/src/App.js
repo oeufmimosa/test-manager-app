@@ -12,6 +12,7 @@ import AdminPage from './components/AdminPage';
 import Execution from './components/Execution';
 import ExecutionsPage from './components/ExecutionsPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import './App.scss'
 
 
 function App() {

@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Header from './Header'
 
 function ExecutionsPage() {
   const [executions, setExecutions] = useState([]);
@@ -152,6 +153,8 @@ function ExecutionsPage() {
 
   return (
     <div className="executions-page">
+      <Header />
+      <main>
       <h2>Liste des Exécutions</h2>
 
       <div className="create-execution-form">
@@ -185,6 +188,7 @@ function ExecutionsPage() {
           </div>
         ))}
       </div>
+      </main>
     </div>
   );
 }

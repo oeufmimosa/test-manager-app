@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
+import '../styles/dashboard.scss';
 
 function Dashboard() {
   const [userData, setUserData] = useState(null);
@@ -115,23 +116,24 @@ function Dashboard() {
                 <p>Email : {userData.email}</p>
                 <p>Nom : {userData.name}</p>
                 <p>Rôle : {userData.role}</p>
-                <button onClick={handleEditToggle}>Modifier les informations</button>
-                <button onClick={handlePasswordToggle}>Modifier le mot de passe</button>
+                <button className="dashboard-button" onClick={handleEditToggle}>Modifier les informations</button>
+                <button className="dashboard-button cancel" onClick={handlePasswordToggle}>Modifier le mot de passe</button>
+
               </>
             ) : (
               <>
                 <input
-                  type="text"
+                  type="text" className="dashboard-input"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
-                <input
+                <input className="dashboard-input"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
                 <button onClick={handleUpdateUser}>Enregistrer</button>
-                <button onClick={handleEditToggle}>Annuler</button>
+                <button className="cancel" onClick={handleEditToggle}>Annuler</button>
               </>
             )}
 
@@ -156,16 +158,16 @@ function Dashboard() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
                 <button onClick={handleChangePassword}>Changer le mot de passe</button>
-                <button onClick={handlePasswordToggle}>Annuler</button>
+                <button className="cancel" onClick={handlePasswordToggle}>Annuler</button>
               </>
             )}
-        </div>
-      ) : (
-        <p>Chargement des informations...</p>
-      )}
+          </div>
+        ) : (
+          <p>Chargement des informations...</p>
+        )}
       </main>
     </div>
   );
-}
+};
 
 export default Dashboard;

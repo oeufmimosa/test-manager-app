@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef,useCallback} from 'react';
 import { useParams } from 'react-router-dom';
 import Header from './Header';
+import "../styles/teststep.scss";
 
 function TestSteps() {
   const { testId } = useParams();
@@ -160,7 +161,7 @@ function TestSteps() {
     return (
     <div>
       <Header />
-      <div className="test-steps-container">
+      <div className="teststep-container">
         {/* Afficher les détails du test */}
         {testDetails && (
           <div className="test-details">

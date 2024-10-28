@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Header from './Header'
 
 function AdminPage() {
   const [users, setUsers] = useState([]);
@@ -154,6 +155,8 @@ function AdminPage() {
 
   return (
     <div className="admin-page">
+      <Header />
+      <main>
       <h1>Admin - Liste des utilisateurs</h1>
       <div className="user-list">
         {users.map((user) => (
@@ -201,6 +204,7 @@ function AdminPage() {
           </div>
         ))}
       </div>
+      </main>
     </div>
   );
 }

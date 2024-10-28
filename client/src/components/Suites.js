@@ -98,58 +98,56 @@ function Suites() {
   }, []);
 
   return (
-    <div className="suites-container">
+    <div className="container">
       <Header />
       <main>
         <h2>Gestion des Suites de Tests</h2>
         <button onClick={() => {
-            setShowCreateForm(!showCreateForm);
-            setEditMode(false);
-            setEditSuiteId(null);
-            setSuiteName('');
-            setSuiteDescription('');
+          setShowCreateForm(!showCreateForm);
+          setEditMode(false);
+          setSuiteName('');
+          setSuiteDescription('');
         }}>
-            {showCreateForm ? 'Annuler' : 'Créer Suite'}
+          {showCreateForm ? 'Annuler' : 'Créer Suite'}
         </button>
 
         {showCreateForm && (
-            <div className="create-suite-form">
+          <div className="block-item">
             <input
-                type="text"
-                placeholder="Nom de la suite"
-                value={suiteName}
-                onChange={(e) => setSuiteName(e.target.value)}
+              type="text"
+              placeholder="Nom de la suite"
+              value={suiteName}
+              onChange={(e) => setSuiteName(e.target.value)}
             />
             <textarea
-                placeholder="Description de la suite"
-                value={suiteDescription}
-                onChange={(e) => setSuiteDescription(e.target.value)}
+              placeholder="Description de la suite"
+              value={suiteDescription}
+              onChange={(e) => setSuiteDescription(e.target.value)}
             />
-            <button onClick={saveTestSuite}>
-                {editMode ? 'Modifier' : 'Créer'}
-            </button>
-            </div>
+            <button onClick={saveTestSuite}>{editMode ? 'Modifier' : 'Créer'}</button>
+          </div>
         )}
 
-        <div className="test-suites-list">
-            {suites.length > 0 ? (
+        <div className="block-list">
+          {suites.length > 0 ? (
             suites.map((suite) => (
-                <div key={suite.suite_id} className="suite-item">
-                <h3 onClick={() => viewTestsForSuite(suite.suite_id)} style={{ cursor: 'pointer' }}>
-                    {suite.name}
-                </h3>
+              <div key={suite.suite_id} className="block-item">
+                <h3 onClick={() => viewTestsForSuite(suite.suite_id)}>{suite.name}</h3>
                 <p>{suite.description}</p>
-                <button onClick={() => startEditingSuite(suite)}>Modifier</button>
-                <button onClick={() => deleteTestSuite(suite.suite_id)}>Supprimer</button>
+                <div className="block-buttons">
+                  <button onClick={() => startEditingSuite(suite)}>Modifier</button>
+                  <button className="cancel" onClick={() => deleteTestSuite(suite.suite_id)}>Supprimer</button>
                 </div>
+              </div>
             ))
-            ) : (
+          ) : (
             <p>Aucune suite de test trouvée.</p>
-            )}
+          )}
         </div>
       </main>
     </div>
   );
-}
+};
 
 export default Suites;
+
