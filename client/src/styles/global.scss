@@ -79,7 +79,7 @@ input, textarea {
     color: #ffffff;
     word-wrap: break-word; // Pour s'assurer que les mots longs se cassent
   
-    h3 {
+    h3 { 
       font-size: 1.5em;
       cursor: pointer;
       color: #000000;
@@ -95,6 +95,7 @@ input, textarea {
       white-space: pre-wrap; 
       overflow-wrap: break-word; 
       font-size: 1.1em; 
+      text-align: left;
     }
   
     .block-buttons {
