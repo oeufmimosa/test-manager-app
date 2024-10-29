@@ -9,7 +9,7 @@ const initSuperAdmin = async () => {
   const superAdmin = await usersCollection.findOne({ role: 'superadmin' });
 
   if (!superAdmin) {
-    const hashedPassword = await bcrypt.hash('superadmin', 10);
+    const hashedPassword = await bcrypt.hash('This_is_a_test0', 10);
     const userId = uuidv4();
     const newSuperAdmin = {
       user_id: userId,

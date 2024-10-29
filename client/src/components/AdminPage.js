@@ -93,7 +93,7 @@ function AdminPage() {
     }
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/${user_id}/role`, {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/users/${user_id}/role`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
