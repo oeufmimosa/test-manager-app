@@ -96,54 +96,57 @@ function Tests() {
   }, []);
 
   return (
-    <div className="container">
+    <div>
       <Header />
-      <main>
-        <h2>Gestion des Tests</h2>
-        <button onClick={() => {
-          setEditMode(false);
-          setTestName('');
-          setTestDescription('');
-        }}>
-          {editMode ? 'Annuler' : 'Créer Test'}
-        </button>
+        <div className="container">
+          
+          <main>
+            <h2>Gestion des Tests</h2>
+            <button onClick={() => {
+              setEditMode(false);
+              setTestName('');
+              setTestDescription('');
+            }}>
+              {editMode ? 'Annuler' : 'Créer Test'}
+            </button>
 
-        <div className="block-item">
-          <input
-            type="text"
-            placeholder="Nom du test"
-            value={testName}
-            onChange={(e) => setTestName(e.target.value)}
-          />
-          <textarea
-            placeholder="Description du test"
-            value={testDescription}
-            onChange={(e) => setTestDescription(e.target.value)}
-          />
-          <button onClick={saveTest}>
-            {editMode ? 'Mettre à jour le Test' : 'Créer le Test'}
-          </button>
-        </div>
+            <div className="block-item">
+              <input
+                type="text"
+                placeholder="Nom du test"
+                value={testName}
+                onChange={(e) => setTestName(e.target.value)}
+              />
+              <textarea
+                placeholder="Description du test"
+                value={testDescription}
+                onChange={(e) => setTestDescription(e.target.value)}
+              />
+              <button onClick={saveTest}>
+                {editMode ? 'Mettre à jour le Test' : 'Créer le Test'}
+              </button>
+            </div>
 
-        <div className="block-list">
-          {tests.length > 0 ? (
-            tests.map((test) => (
-              <div key={test.test_id} className="test-item">
-                <h3 onClick={() => viewTestSteps(test.test_id)} style={{ cursor: 'pointer' }}>
-                  {test.name}
-                </h3>
-                <p>{test.description}</p>
-                <div className="block-buttons">
-                  <button onClick={() => startEditingTest(test)}>Modifier</button>
-                  <button onClick={() => deleteTest(test.test_id)}>Supprimer</button>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p>Aucun test trouvé.</p>
-          )}
+            <div className="test">
+              {tests.length > 0 ? (
+                tests.map((test) => (
+                  <div key={test.test_id} className="block-item">
+                    <h3 onClick={() => viewTestSteps(test.test_id)} style={{ cursor: 'pointer' }}>
+                      {test.name}
+                    </h3>
+                    <p>{test.description}</p>
+                    <div className="block-buttons">
+                      <button onClick={() => startEditingTest(test)}>Modifier</button>
+                      <button className="cancel" onClick={() => deleteTest(test.test_id)}>Supprimer</button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p>Aucun test trouvé.</p>
+              )}
+            </div>
+          </main>
         </div>
-      </main>
     </div>
   );
 };

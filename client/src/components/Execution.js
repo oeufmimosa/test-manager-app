@@ -129,25 +129,28 @@ function Execution() {
   }
 
   return (
-    <div className="execution-page">
+    <div> 
       <Header />
-      <main>
-      <h2>Exécution : {execution.execution_name}</h2>
-      {suiteDetails && <p>Suite : {suiteDetails.name}</p>}
-      <p>Date de création : {new Date(execution.createdAt).toLocaleString()}</p>
+      <div className="container">
+        
+        <main>
+        <h2>Exécution : {execution.execution_name}</h2>
+        {suiteDetails && <p>Suite : {suiteDetails.name}</p>}
+        <p>Date de création : {new Date(execution.createdAt).toLocaleString()}</p>
 
-      <div className="test-list">
-        {execution.tests.map((test) => (
-          <div key={test.test_id} className="test-item">
-            <p><strong>Test :</strong> {testDetails[test.test_id]?.name || test.test_id}</p>
-            <p><strong>Statut :</strong> {test.status}</p>
-            <button onClick={() => updateTestStatus(test.test_id, 'validé')}>Valider</button>
-            <button onClick={() => updateTestStatus(test.test_id, 'non validé')}>Non Valider</button>
-            <button onClick={() => navigate(`/tests/${test.test_id}/steps`)}>Voir Étapes du Test</button>
-          </div>
-        ))}
+        <div className="block-item">
+          {execution.tests.map((test) => (
+            <div key={test.test_id} className="test-item">
+              <p><strong>Test :</strong> {testDetails[test.test_id]?.name || test.test_id}</p>
+              <p><strong>Statut :</strong> {test.status}</p>
+              <button onClick={() => updateTestStatus(test.test_id, 'validé')}>Valider</button>
+              <button onClick={() => updateTestStatus(test.test_id, 'non validé')}>Non Valider</button>
+              <button onClick={() => navigate(`/tests/${test.test_id}/steps`)}>Voir Étapes du Test</button>
+            </div>
+          ))}
+        </div>
+        </main>
       </div>
-      </main>
     </div>
   );
 }

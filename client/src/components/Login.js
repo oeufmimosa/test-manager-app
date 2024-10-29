@@ -32,7 +32,7 @@ function Login() {
   };
 
   return (
-    <div className="login-container">
+    <div className="container">
       <h2>Connexion</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <form onSubmit={handleLogin}>

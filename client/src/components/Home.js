@@ -16,7 +16,7 @@ function Home() {
   };
 
   return (
-    <div className="home-container">
+    <div className="container">
       <h1>Bienvenue sur notre application</h1>
       <div className="button-group">
         <button className="home-button" onClick={handleLogin}>Se connecter</button>

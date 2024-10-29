@@ -214,65 +214,67 @@ const removeSuiteFromTest = async (testId) => {
   }, [suiteId]);
 
   return (
-    <div className="container">
+    <div>
       <Header />
-      <main>
-        <h2>Tests de la Suite {suiteData.name}</h2>
-        <p>{suiteData.description}</p>
-        <p>Créé le : {new Date(suiteData.createdAt).toLocaleDateString()}</p>
+      <div className="container">
+        <main>
+          <h2>Tests de la Suite {suiteData.name}</h2>
+          <p>{suiteData.description}</p>
+          <p>Créé le : {new Date(suiteData.createdAt).toLocaleDateString()}</p>
 
-        <div className="block-item">
-          <input
-            type="text"
-            placeholder="Nom du test"
-            value={testName}
-            onChange={(e) => setTestName(e.target.value)}
-          />
-          <textarea
-            placeholder="Description du test"
-            value={testDescription}
-            onChange={(e) => setTestDescription(e.target.value)}
-          />
-          <button onClick={saveTest}>
-            {editMode ? 'Mettre à jour le Test' : 'Créer le Test'}
-          </button>
-        </div>
+          <div className="block-item">
+            <input
+              type="text"
+              placeholder="Nom du test"
+              value={testName}
+              onChange={(e) => setTestName(e.target.value)}
+            />
+            <textarea
+              placeholder="Description du test"
+              value={testDescription}
+              onChange={(e) => setTestDescription(e.target.value)}
+            />
+            <button onClick={saveTest}>
+              {editMode ? 'Mettre à jour le Test' : 'Créer le Test'}
+            </button>
+          </div>
 
-        <div className="block-list">
-          <select
-            value={selectedTestId}
-            onChange={(e) => setSelectedTestId(e.target.value)}
-          >
-            <option value="">Sélectionner un test existant</option>
-            {allTests.map((test) => (
-              <option key={test.test_id} value={test.test_id}>
-                {test.name}
-              </option>
-            ))}
-          </select>
-          <button onClick={addExistingTestToSuite}>Ajouter à la Suite</button>
-        </div>
+          <div className="block-list">
+            <select
+              value={selectedTestId}
+              onChange={(e) => setSelectedTestId(e.target.value)}
+            >
+              <option value="">Sélectionner un test existant</option>
+              {allTests.map((test) => (
+                <option key={test.test_id} value={test.test_id}>
+                  {test.name}
+                </option>
+              ))}
+            </select>
+            <button onClick={addExistingTestToSuite}>Ajouter à la Suite</button>
+          </div>
 
-        <div className="test-list">
-          {tests.length > 0 ? (
-            tests.map((test) => (
-              <div key={test.test_id} className="block-item">
-                <h3 onClick={() => navigateToTestSteps(test.test_id)} style={{ cursor: 'pointer' }}>
-                    {test.name}
-                </h3>
-                <p>{test.description}</p>
-                <div className="block-buttons">
-                  <button onClick={() => startEditingTest(test)}>Modifier</button>
-                  <button onClick={() => removeSuiteFromTest(test.test_id)}>Retirer de la Suite</button>
+          <div className="test-list">
+            {tests.length > 0 ? (
+              tests.map((test) => (
+                <div key={test.test_id} className="block-item">
+                  <h3 onClick={() => navigateToTestSteps(test.test_id)} style={{ cursor: 'pointer' }}>
+                      {test.name}
+                  </h3>
+                  <p>{test.description}</p>
+                  <div className="block-buttons">
+                    <button onClick={() => startEditingTest(test)}>Modifier</button>
+                    <button className="cancel" onClick={() => removeSuiteFromTest(test.test_id)}>Retirer de la Suite</button>
 
+                  </div>
                 </div>
-              </div>
-            ))
-          ) : (
-            <p>Aucun test trouvé pour cette suite.</p>
-          )}
-        </div>
-      </main>
+              ))
+            ) : (
+              <p>Aucun test trouvé pour cette suite.</p>
+            )}
+          </div>
+        </main>
+      </div>
     </div>
   );
 };

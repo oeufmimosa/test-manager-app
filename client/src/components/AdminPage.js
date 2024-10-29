@@ -154,57 +154,60 @@ function AdminPage() {
   }, [fetchAllUsers]);
 
   return (
-    <div className="admin-page">
+    <div >
       <Header />
-      <main>
-      <h1>Admin - Liste des utilisateurs</h1>
-      <div className="user-list">
-        {users.map((user) => (
-          <div key={user.user_id} className="user-item">
-            <p><strong>Nom:</strong> {user.name}</p>
-            <p><strong>Email:</strong> {user.email}</p>
-            <p><strong>Rôle:</strong> {user.role}</p>
-            <button onClick={() => startEditingUser(user)}>
-              Modifier
-            </button>
-            {currentUser.role === 'superadmin' && (
-              <button onClick={() => deleteUser(user.user_id)}>Supprimer</button>
-            )}
-            {editUser && editUser.user_id === user.user_id && (
-              <div className="edit-user-form">
-                <input
-                  type="text"
-                  value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
-                  placeholder="Nom"
-                />
-                <input
-                  type="email"
-                  value={editEmail}
-                  onChange={(e) => setEditEmail(e.target.value)}
-                  placeholder="Email"
-                />
-                {currentUser.role === 'superadmin' && (
-                  <select
-                    value={editRole}
-                    onChange={(e) => setEditRole(e.target.value)}
-                  >
-                    <option value="user">Utilisateur</option>
-                    <option value="admin">Admin</option>
-                    <option value="superadmin">Super Admin</option>
-                  </select>
-                )}
-                <button onClick={() => updateUser(user.user_id)}>Enregistrer</button>
-                {currentUser.role === 'superadmin' && (
-                  <button onClick={() => updateUserRole(user.user_id)}>Mettre à jour le rôle</button>
-                )}
-                <button onClick={cancelEditing}>Annuler</button>
-              </div>
-            )}
-          </div>
-        ))}
+      <div className="container">
+      
+        <main>
+        <h1>Admin - Liste des utilisateurs</h1>
+        <div>
+          {users.map((user) => (
+            <div key={user.user_id} className="block-item">
+              <p><strong>Nom:</strong> {user.name}</p>
+              <p><strong>Email:</strong> {user.email}</p>
+              <p><strong>Rôle:</strong> {user.role}</p>
+              <button onClick={() => startEditingUser(user)}>
+                Modifier
+              </button>
+              {currentUser.role === 'superadmin' && (
+                <button onClick={() => deleteUser(user.user_id)}>Supprimer</button>
+              )}
+              {editUser && editUser.user_id === user.user_id && (
+                <div className="block-item">
+                  <input
+                    type="text"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    placeholder="Nom"
+                  />
+                  <input
+                    type="email"
+                    value={editEmail}
+                    onChange={(e) => setEditEmail(e.target.value)}
+                    placeholder="Email"
+                  />
+                  {currentUser.role === 'superadmin' && (
+                    <select
+                      value={editRole}
+                      onChange={(e) => setEditRole(e.target.value)}
+                    >
+                      <option value="user">Utilisateur</option>
+                      <option value="admin">Admin</option>
+                      <option value="superadmin">Super Admin</option>
+                    </select>
+                  )}
+                  <button onClick={() => updateUser(user.user_id)}>Enregistrer</button>
+                  {currentUser.role === 'superadmin' && (
+                    <button onClick={() => updateUserRole(user.user_id)}>Mettre à jour le rôle</button>
+                  )}
+                  <button onClick={cancelEditing}>Annuler</button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+        </main>
       </div>
-      </main>
     </div>
   );
 }

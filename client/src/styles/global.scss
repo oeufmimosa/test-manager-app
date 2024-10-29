@@ -28,8 +28,8 @@ a {
 
 // Espacement des conteneurs pour éviter que les champs sortent
 .container {
-  padding: 20px;
-  max-width: 1200px;
+  padding: 10px;
+  max-width: 90%;
   margin: 0 auto;
 }
 
@@ -37,6 +37,7 @@ button {
   background-color: $button-color;
   color: white;
   padding: 10px 20px;
+  margin: 5px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -57,6 +58,7 @@ button {
 
 // Champs de formulaire
 input, textarea {
+  font-family: 'Arial', sans-serif;
   padding: 10px;
   margin-bottom: 15px;
   width: 100%;
@@ -64,11 +66,12 @@ input, textarea {
   border: 1px solid #ccc;
   border-radius: 5px;
   box-sizing: border-box;
+  word-wrap: break-word
 }
 
 // Styles pour les blocs
 .block-item {
-    background-color: #3b4a59;
+    background-color: #D9D9D9;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
@@ -79,18 +82,18 @@ input, textarea {
     h3 {
       font-size: 1.5em;
       cursor: pointer;
-      color: #ffffff;
+      color: #000000;
     }
   
     p {
-      background-color: #53667a;
+      background-color: #EFEFEF;
       padding: 10px;
       border-radius: 5px;
       margin: 10px 0;
-      color: #ffffff;
-      word-wrap: break-word; // Pour s'assurer que les mots longs se cassent
-      white-space: pre-wrap; // Pour gérer les retours à la ligne
-      overflow-wrap: break-word; // Pour couper les longs mots
+      color: #000000;
+      word-wrap: break-word; 
+      white-space: pre-wrap; 
+      overflow-wrap: break-word; 
       font-size: 1.1em; 
     }
   

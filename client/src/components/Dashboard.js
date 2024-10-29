@@ -130,67 +130,69 @@ function Dashboard() {
   };
 
   return (
-    <div className="dashboard-container">
+    <div >
       <Header />
-      <main>
-        <h2>Votre Synthèse Personnelle</h2>
-        {userData ? (
-          <div>
-            {!editMode ? (
-              <>
-                <p>Email : {userData.email}</p>
-                <p>Nom : {userData.name}</p>
-                <p>Rôle : {userData.role}</p>
-                <button className="dashboard-button" onClick={handleEditToggle}>Modifier les informations</button>
-                <button className="dashboard-button cancel" onClick={handlePasswordToggle}>Modifier le mot de passe</button>
-                <button className="dashboard-button delete" onClick={handleDeleteAccount}>Supprimer le compte</button>
-              </>
-            ) : (
-              <>
-                <input
-                  type="text" className="dashboard-input"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-                <input className="dashboard-input"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <button onClick={handleUpdateUser}>Enregistrer</button>
-                <button className="cancel" onClick={handleEditToggle}>Annuler</button>
-              </>
-            )}
+      <div className="dashboard-container">
+        <main>
+          <h2>Votre Synthèse Personnelle</h2>
+          {userData ? (
+            <div>
+              {!editMode ? (
+                <>
+                  <p>Email : {userData.email}</p>
+                  <p>Nom : {userData.name}</p>
+                  <p>Rôle : {userData.role}</p>
+                  <button className="dashboard-button" onClick={handleEditToggle}>Modifier les informations</button>
+                  <button className="dashboard-button cancel" onClick={handlePasswordToggle}>Modifier le mot de passe</button>
+                  <button className="dashboard-button delete" onClick={handleDeleteAccount}>Supprimer le compte</button>
+                </>
+              ) : (
+                <>
+                  <input
+                    type="text" className="dashboard-input"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                  <input className="dashboard-input"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  <button onClick={handleUpdateUser}>Enregistrer</button>
+                  <button className="cancel" onClick={handleEditToggle}>Annuler</button>
+                </>
+              )}
 
-            {passwordMode && (
-              <>
-                <input
-                  type="password"
-                  placeholder="Ancien mot de passe"
-                  value={oldPassword}
-                  onChange={(e) => setOldPassword(e.target.value)}
-                />
-                <input
-                  type="password"
-                  placeholder="Nouveau mot de passe"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                />
-                <input
-                  type="password"
-                  placeholder="Confirmer le nouveau mot de passe"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-                <button onClick={handleChangePassword}>Changer le mot de passe</button>
-                <button className="cancel" onClick={handlePasswordToggle}>Annuler</button>
-              </>
-            )}
-          </div>
-        ) : (
-          <p>Chargement des informations...</p>
-        )}
-      </main>
+              {passwordMode && (
+                <>
+                  <input
+                    type="password"
+                    placeholder="Ancien mot de passe"
+                    value={oldPassword}
+                    onChange={(e) => setOldPassword(e.target.value)}
+                  />
+                  <input
+                    type="password"
+                    placeholder="Nouveau mot de passe"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                  />
+                  <input
+                    type="password"
+                    placeholder="Confirmer le nouveau mot de passe"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
+                  <button onClick={handleChangePassword}>Changer le mot de passe</button>
+                  <button className="cancel" onClick={handlePasswordToggle}>Annuler</button>
+                </>
+              )}
+            </div>
+          ) : (
+            <p>Chargement des informations...</p>
+          )}
+        </main>
+      </div>
     </div>
   );
 }

@@ -62,7 +62,7 @@ function Register() {
   };
 
   return (
-    <div className="register-container">
+    <div className="container">
       <h2>Créer un compte</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {success && <p style={{ color: 'green' }}>{success}</p>}

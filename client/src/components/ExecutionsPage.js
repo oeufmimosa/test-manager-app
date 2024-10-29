@@ -152,43 +152,45 @@ function ExecutionsPage() {
   }, [fetchAllExecutions, fetchAllSuites]);
 
   return (
-    <div className="executions-page">
+    <div> 
       <Header />
-      <main>
-      <h2>Liste des Exécutions</h2>
+        <div className="container">
+          <main>
+          <h2>Liste des Exécutions</h2>
 
-      <div className="create-execution-form">
-        <h3>Créer une Nouvelle Exécution</h3>
-        <input
-          type="text"
-          placeholder="Nom de l'exécution"
-          value={executionName}
-          onChange={(e) => setExecutionName(e.target.value)}
-        />
-        <select value={suiteId} onChange={handleSuiteChange}>
-          <option value="">Sélectionner une suite</option>
-          {suites.map((suite) => (
-            <option key={suite.suite_id} value={suite.suite_id}>
-              {suite.name}
-            </option>
-          ))}
-        </select>
-        <button onClick={createExecution} disabled={!suiteId || tests.length === 0 || !executionName}>
-          Créer Exécution
-        </button>
-      </div>
-
-      <div className="execution-list">
-        {executions.map((execution) => (
-          <div key={execution.execution_id} className="execution-item">
-            <p><strong>Nom de l'Exécution :</strong> {execution.execution_name}</p>
-            <p><strong>Suite :</strong> {execution.suite_name}</p>
-            <p><strong>Créé le :</strong> {new Date(execution.createdAt).toLocaleString()}</p>
-            <button onClick={() => navigateToExecution(execution.execution_id)}>Voir Détails</button>
+          <div className="block-item">
+            <h3>Créer une Nouvelle Exécution</h3>
+            <input
+              type="text"
+              placeholder="Nom de l'exécution"
+              value={executionName}
+              onChange={(e) => setExecutionName(e.target.value)}
+            />
+            <select value={suiteId} onChange={handleSuiteChange}>
+              <option value="">Sélectionner une suite</option>
+              {suites.map((suite) => (
+                <option key={suite.suite_id} value={suite.suite_id}>
+                  {suite.name}
+                </option>
+              ))}
+            </select>
+            <button onClick={createExecution} disabled={!suiteId || tests.length === 0 || !executionName}>
+              Créer Exécution
+            </button>
           </div>
-        ))}
-      </div>
-      </main>
+
+          <div>
+            {executions.map((execution) => (
+              <div key={execution.execution_id} className="block-item">
+                <p><strong>Nom de l'Exécution :</strong> {execution.execution_name}</p>
+                <p><strong>Suite :</strong> {execution.suite_name}</p>
+                <p><strong>Créé le :</strong> {new Date(execution.createdAt).toLocaleString()}</p>
+                <button onClick={() => navigateToExecution(execution.execution_id)}>Voir Détails</button>
+              </div>
+            ))}
+          </div>
+          </main>
+        </div>
     </div>
   );
 }

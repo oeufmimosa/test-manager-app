@@ -158,71 +158,74 @@ function TestSteps() {
     }
   };
 
-    return (
+  return (
     <div>
       <Header />
-      <div className="teststep-container">
-        {/* Afficher les détails du test */}
-        {testDetails && (
-          <div className="test-details">
-            <h2>{testDetails.name}</h2>
-            <p>{testDetails.description}</p>
-            <p><strong>Créé le:</strong> {new Date(testDetails.createdAt).toLocaleDateString()}</p>
-          </div>
-        )}
-
-        <h2>Étapes pour le Test</h2>
+        <div className="container">
         
-        <div className="create-step-form">
-          <textarea
-            placeholder="Description de l'étape"
-            value={stepDescription}
-            onChange={(e) => setStepDescription(e.target.value)}
-          />
-          <input
-            type="file"
-            multiple
-            onChange={handleImageUpload}
-            ref={createImageInputRef}
-          />
-          <button onClick={createTestStep}>Créer l'Étape</button>
-        </div>
+          <div >
+            {/* Afficher les détails du test */}
+            {testDetails && (
+              <div className="test-details">
+                <h2>{testDetails.name}</h2>
+                <p>{testDetails.description}</p>
+                <p><strong>Créé le:</strong> {new Date(testDetails.createdAt).toLocaleDateString()}</p>
+              </div>
+            )}
 
-        {testSteps.length > 0 ? (
-          testSteps.map((step) => (
-            <div key={step.step_id} className="step-item">
-              <p>{step.description}</p>
-              {step.images && step.images.map((img, index) => (
-                <div key={index}>
-                  <img src={img} alt="step" width="100" />
-                </div>
-              ))}
-              <button onClick={() => startEditingStep(step)}>Modifier</button>
-              <button onClick={() => deleteTestStep(step.step_id)}>Supprimer</button>
-
-              {editStep && editStep.step_id === step.step_id && (
-                <div className="edit-step-form">
-                  <textarea
-                    value={editDescription}
-                    onChange={(e) => setEditDescription(e.target.value)}
-                    placeholder="Modifier la description"
-                  />
-                  <input
-                    type="file"
-                    multiple
-                    onChange={handleNewImageUpload}
-                    ref={editImageInputRef}
-                  />
-                  <button onClick={() => updateTestStep(editStep)}>Enregistrer les modifications</button>
-                  <button onClick={() => setEditStep(null)}>Annuler</button>
-                </div>
-              )}
+            <h2>Étapes pour le Test</h2>
+            
+            <div className="block-item">
+              <textarea
+                placeholder="Description de l'étape"
+                value={stepDescription}
+                onChange={(e) => setStepDescription(e.target.value)}
+              />
+              <input
+                type="file"
+                multiple
+                onChange={handleImageUpload}
+                ref={createImageInputRef}
+              />
+              <button onClick={createTestStep}>Créer l'Étape</button>
             </div>
-          ))
-        ) : (
-          <p>Aucune étape trouvée pour ce test.</p>
-        )}
-      </div>
+
+            {testSteps.length > 0 ? (
+              testSteps.map((step) => (
+                <div key={step.step_id} className="block-item">
+                  <p>{step.description}</p>
+                  {step.images && step.images.map((img, index) => (
+                    <div key={index}>
+                      <img src={img} alt="step" width="100" />
+                    </div>
+                  ))}
+                  <button onClick={() => startEditingStep(step)}>Modifier</button>
+                  <button className="cancel" onClick={() => deleteTestStep(step.step_id)}>Supprimer</button>
+
+                  {editStep && editStep.step_id === step.step_id && (
+                    <div className="edit-step-form">
+                      <textarea
+                        value={editDescription}
+                        onChange={(e) => setEditDescription(e.target.value)}
+                        placeholder="Modifier la description"
+                      />
+                      <input
+                        type="file"
+                        multiple
+                        onChange={handleNewImageUpload}
+                        ref={editImageInputRef}
+                      />
+                      <button onClick={() => updateTestStep(editStep)}>Enregistrer les modifications</button>
+                      <button onClick={() => setEditStep(null)}>Annuler</button>
+                    </div>
+                  )}
+                </div>
+              ))
+            ) : (
+              <p>Aucune étape trouvée pour ce test.</p>
+            )}
+          </div>
+        </div>  
     </div>
   );
 }

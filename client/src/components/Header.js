@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Logout from './Logout';
 import useAuth from '../hooks/useAuth';
 import '../styles/header.scss';
+import '../styles/global.scss';
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -14,7 +15,7 @@ const Header = () => {
 
   return (
     <header className="app-header">
-      <div className="header-container">
+      <div className="header" >
         <div className="logo">
           <img src="/favicon.ico" alt="Testman Logo" />
           <span className="logo-text">Testman</span>
