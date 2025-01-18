@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import emailjs from 'emailjs-com';
 import '../styles/home.scss';
 
+
 function Home() {
   const navigate = useNavigate();
   const [contactForm, setContactForm] = useState({
@@ -47,82 +48,85 @@ function Home() {
 
   return (
     <div className="container">
-      <header className="hero">
+      <div className="logo">
+        <img src="favicon.ico" onClick={handleLogin} alt="Logo Testman" />
+      </div>
+      <header>
+
         <h1>Bienvenue sur Testman</h1>
         <p>
-          Testman est votre solution complète pour gérer efficacement vos suites de tests.
-          Accélérez votre processus de validation, améliorez la qualité de vos applications,
-          et collaborez facilement avec vos équipes.
+          Testman est la solution complète pour vos suites de tests.
+          
         </p>
         <div className="button-group">
           <button className="home-button" onClick={handleLogin}>Se connecter</button>
           <button className="home-button" onClick={handleRegister}>Créer un compte</button>
         </div>
       </header>
+      
       <main>
-          <section className="features-section">
-            <article>
-              <h2>Fonctionnalités Clés</h2>
-              <p>Avec Testman, accédez à des fonctionnalités avancées pour optimiser vos processus de test :</p>
+        <section className="features-section">
+          <article>
+            <img src="img/prisedetete.png" alt="Homme qui se prend la tête" />
+            <div className="content">
+              <h2>Fini les casses-tête</h2>
+              <p>Avec Testman, accédez à des fonctionnalités avancées pour optimiser vos processus de test :</p>
               <ul>
-                <li>Gestion complète des suites de tests et des cas de test associés.</li>
-                <li>Suivi d'exécution des tests avec un historique complet des résultats.</li>
-                <li>Tableaux de bord intuitifs pour surveiller l'évolution des tests.</li>
+                <li>Gestion complète des suites de tests et des cas de test associés</li>
+                <li>Suivi d'exécution des tests avec un historique complet des résultats</li>
+                <li>Tableaux de bord intuitifs pour surveiller l'évolution des tests</li>
               </ul>
-            </article>
+            </div>
+          </article>
 
-            <article>
-              <h2>Pourquoi Choisir Testman ?</h2>
-              <p>Que vous soyez développeur, testeur ou chef de projet, Testman vous aide à :</p>
+          <article>
+            <img src="img/ticketing.png" alt="liste de tache validée" />
+            <div className="content">
+              <h2>Pourquoi Choisir Testman ?</h2>
+              <p>Que vous soyez développeur, testeur ou chef de projet, Testman vous aide à :</p>
               <ul>
-                <li>Réduire les erreurs en centralisant vos tests.</li>
-                <li>Collaborer efficacement grâce à des permissions de rôle personnalisées.</li>
-                <li>Automatiser la gestion des suites de tests pour un gain de temps considérable.</li>
+                <li>Réduire les erreurs en centralisant vos tests</li>
+                <li>Collaborer efficacement grâce à des permissions de rôle personnalisées</li>
+                <li>Automatiser la gestion des suites de tests pour un gain de temps considérable</li>
               </ul>
-            </article>
+            </div>
+          </article>
+        </section>
+      </main>
 
-            <article>
-              <h2>Inscription et Connexion</h2>
-              <p>
-                Pour profiter de toutes les fonctionnalités de Testman, inscrivez-vous gratuitement ou connectez-vous si vous avez déjà un compte.
-              </p>
-            </article>
-          </section>
-        </main>
-        <footer>
-
-          <section className="contact-form-section">
-            <h2>Contactez-nous</h2>
-            {successMessage && <p className="success-message">{successMessage}</p>}
-            {errorMessage && <p className="error-message">{errorMessage}</p>}
-            <form onSubmit={handleContactSubmit} className="contact-form">
-              <input
-                type="text"
-                name="name"
-                placeholder="Nom"
-                value={contactForm.name}
-                onChange={handleContactChange}
-                required
-              />
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={contactForm.email}
-                onChange={handleContactChange}
-                required
-              />
-              <textarea
-                name="message"
-                placeholder="Votre message"
-                value={contactForm.message}
-                onChange={handleContactChange}
-                required
-              />
-              <button type="submit">Envoyer</button>
-            </form>
-          </section>
-        </footer>
+      <footer>
+        <section className="contact-form-section">
+          <h2>Contactez-nous</h2>
+          {successMessage && <p className="success-message">{successMessage}</p>}
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
+          <form onSubmit={handleContactSubmit} className="contact-form">
+            <input
+              type="text"
+              name="name"
+              placeholder="Nom"
+              value={contactForm.name}
+              onChange={handleContactChange}
+              required
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={contactForm.email}
+              onChange={handleContactChange}
+              required
+            />
+            <textarea
+              name="message"
+              placeholder="Votre message"
+              value={contactForm.message}
+              onChange={handleContactChange}
+              required
+            />
+            <button type="submit">Envoyer</button>
+          </form>
+        </section>
+      </footer>
     </div>
   );
 }
