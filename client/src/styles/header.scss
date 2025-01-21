@@ -6,6 +6,9 @@
     padding: 10px 20px; // Ajuster le padding pour une meilleure apparence
     box-shadow: none; // Retirer les ombres
     border: none; // Supprimer les bordures
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   
     .header {
         max-width: 100%;
@@ -13,6 +16,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        
     }
   
     .logo {
@@ -40,6 +44,8 @@
   
     .nav-links {
       display: flex;
+
+      
       ul {
         list-style: none;
         display: flex;
